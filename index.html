@@ -9,15 +9,68 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <!-- Шапка з навігацією та кнопкою "Додати оголошення" -->
+    <header>
+      <h1>Дошка оголошень</h1>
 
-    <!-- Блок фільтра за категорією -->
+      <nav aria-label="Основна навігація">
+        <a href="#electronics">Електроніка</a>
+        <a href="#services">Послуги</a>
+        <a href="#other">Інше</a>
+        <a href="#add-ad">Додати оголошення</a>
+      </nav>
+    </header>
 
-    <!-- Список оголошень -->
+    <main>
+      <section id="filter">
+        <h2>Фільтр за категорією</h2>
 
-    <!-- Блок деталей обраного оголошення -->
+        <form>
+          <label for="category">Категорія:</label>
 
-    <!-- Підвал -->
+          <select id="category" name="category">
+            <option value="all">Усі категорії</option>
+            <option value="electronics">Електроніка</option>
+            <option value="services">Послуги</option>
+            <option value="other">Інше</option>
+          </select>
+
+          <button type="submit">Застосувати</button>
+        </form>
+      </section>
+
+      <section id="ads">
+        <h2>Оголошення</h2>
+
+        <p id="add-ad">
+          <a href="#">Додати нове оголошення</a>
+        </p>
+
+        <article id="electronics">
+          <h3>Продам монітор</h3>
+          <p>24-дюймовий IPS-монітор у хорошому стані.</p>
+          <p>Ціна: 3500 грн.</p>
+        </article>
+
+        <article id="services">
+          <h3>Ремонт комп'ютерів</h3>
+          <p>Діагностика, очищення та налаштування ПК і ноутбуків.</p>
+        </article>
+
+        <article id="other">
+          <h3>Віддам книжки</h3>
+          <p>Кілька навчальних книжок безкоштовно.</p>
+        </article>
+      </section>
+    </main>
+
+    <aside aria-labelledby="selected-ad-title">
+      <h2 id="selected-ad-title">Деталі обраного оголошення</h2>
+      <p>Тут буде відображатися детальна інформація про вибране оголошення.</p>
+    </aside>
+
+    <footer>
+      <p>&copy; 2026 Артем Мінаєв. Навчальний проєкт.</p>
+    </footer>
 
     <script src="js/app.js"></script>
   </body>
