@@ -10,14 +10,16 @@
   </head>
   <body>
     <header>
-      <h1>Дошка оголошень</h1>
+      <div class="header-container">
+        <h1>Дошка оголошень</h1>
 
-      <nav aria-label="Основна навігація">
-        <a href="#electronics">Електроніка</a>
-        <a href="#services">Послуги</a>
-        <a href="#other">Інше</a>
-        <a href="#add-ad">Додати оголошення</a>
-      </nav>
+        <nav aria-label="Основна навігація">
+          <a href="#electronics">Електроніка</a>
+          <a href="#services">Послуги</a>
+          <a href="#other">Інше</a>
+          <a href="#add-ad" class="nav-btn-add">Додати оголошення</a>
+        </nav>
+      </div>
     </header>
 
     <main>
@@ -42,30 +44,58 @@
         <h2>Оголошення</h2>
 
         <p id="add-ad">
-          <a href="#">Додати нове оголошення</a>
+          <a href="#" class="btn-action">Додати нове оголошення</a>
         </p>
 
-        <article id="electronics">
-          <h3>Продам монітор</h3>
-          <p>24-дюймовий IPS-монітор у хорошому стані.</p>
-          <p>Ціна: 3500 грн.</p>
+        <article class="card" id="electronics">
+          <img
+            src="assets/img/monitor.svg"
+            alt="24-дюймовий IPS-монітор"
+            class="card-img"
+          />
+          <div class="card-content">
+            <h3>Продам монітор</h3>
+            <p>24-дюймовий IPS-монітор у хорошому стані.</p>
+            <p class="card-price">Ціна: 3500 грн.</p>
+          </div>
         </article>
 
-        <article id="services">
-          <h3>Ремонт комп'ютерів</h3>
-          <p>Діагностика, очищення та налаштування ПК і ноутбуків.</p>
+        <article class="card" id="services">
+          <img
+            src="assets/img/repair.svg"
+            alt="Ремонт комп'ютерів"
+            class="card-img"
+          />
+          <div class="card-content">
+            <h3>Ремонт комп'ютерів</h3>
+            <p>Діагностика, очищення та налаштування ПК і ноутбуків.</p>
+            <p class="card-price">Ціна: від 300 грн.</p>
+          </div>
         </article>
 
-        <article id="other">
-          <h3>Віддам книжки</h3>
-          <p>Кілька навчальних книжок безкоштовно.</p>
+        <article class="card" id="other">
+          <img
+            src="assets/img/books.svg"
+            alt="Навчальні книжки"
+            class="card-img"
+          />
+          <div class="card-content">
+            <h3>Віддам книжки</h3>
+            <p>Кілька навчальних книжок безкоштовно.</p>
+            <p class="card-price">Ціна: безкоштовно</p>
+          </div>
         </article>
       </section>
     </main>
 
     <aside aria-labelledby="selected-ad-title">
       <h2 id="selected-ad-title">Деталі обраного оголошення</h2>
-      <p>Тут буде відображатися детальна інформація про вибране оголошення.</p>
+      <p>Тут відображається детальна інформація про обране оголошення.</p>
+      <div class="aside-details">
+        <p><strong>Оголошення:</strong> Продам монітор</p>
+        <p><strong>Контакт:</strong> +380 (99) 123-45-67</p>
+        <p><strong>Локація:</strong> Корпус ФІОТ / Політехнічна</p>
+      </div>
     </aside>
 
     <footer>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200">
+  <rect width="320" height="200" fill="#f8f4ed" rx="8"/>
+  <rect x="50" y="30" width="220" height="120" rx="6" fill="#2d241e"/>
+  <rect x="58" y="38" width="204" height="104" rx="3" fill="#3a4d5a"/>
+  <rect x="66" y="46" width="188" height="88" rx="2" fill="#5c7a8e" opacity="0.3"/>
+  <path d="M75 115 L120 70 L150 100 L195 55 L245 105 L245 125 L75 125 Z" fill="#9c5123" opacity="0.6"/>
+  <circle cx="215" cy="70" r="10" fill="#e8ba5a"/>
+  <!-- Stand -->
+  <polygon points="145,150 175,150 180,172 140,172" fill="#8c786a"/>
+  <rect x="120" y="172" width="80" height="8" rx="4" fill="#6e5d53"/>
+  <!-- Power LED -->
+  <circle cx="160" cy="145" r="2" fill="#4caf50"/>
+</svg>

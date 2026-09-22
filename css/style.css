@@ -1,0 +1,293 @@
+/* ==========================================================================
+   Практична робота №3: Візуалізація структури за допомогою CSS
+   Варіант 18: Дошка сусідських оголошень
+   Автор: Артем Мінаєв (група ІП-53)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Крок 2: Глобальний reset та налаштування блокової моделі (box model)
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Крок 3: Базова типографіка та кольорова палітра (нейтральна «дошкова»)
+   -------------------------------------------------------------------------- */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #2e2620;
+  background-color: #f6f1ea;
+}
+
+/* --------------------------------------------------------------------------
+   Крок 4: Стилізація header та навігації
+   -------------------------------------------------------------------------- */
+header {
+  background: linear-gradient(180deg, #ece3d6 0%, #e3d7c5 100%);
+  border-bottom: 2px solid #d8c8b4;
+  padding: 18px 24px;
+}
+
+.header-container {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.85rem;
+  color: #3b281c;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+header nav a {
+  color: #5c4333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+header nav a:hover {
+  color: #9c4d1e;
+  background-color: rgba(156, 77, 30, 0.08);
+}
+
+/* Посилання «Додати оголошення» стилізоване як кнопка за варіантом 18 */
+.nav-btn-add {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 6px;
+  background-color: #9c4d1e;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-weight: 600;
+  border: 1px solid #823d14;
+  margin-right: 0 !important;
+  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.2);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-btn-add:hover {
+  background-color: #823d14 !important;
+  box-shadow: 0 3px 6px rgba(130, 61, 20, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   Крок 5: Стилізація main та section
+   -------------------------------------------------------------------------- */
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 20px 12px;
+}
+
+section {
+  margin-bottom: 32px;
+}
+
+section h2 {
+  font-size: 1.4rem;
+  color: #3b281c;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2d3c1;
+}
+
+/* Стилізація форми фільтрації */
+#filter form {
+  background-color: #ffffff;
+  border: 1px solid #dcd1c3;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.04);
+}
+
+#filter label {
+  font-weight: 600;
+  color: #4a382d;
+}
+
+#filter select {
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border: 1px solid #cfbfac;
+  border-radius: 6px;
+  background-color: #fdfbf8;
+  color: #2e2620;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#filter select:focus {
+  border-color: #9c4d1e;
+  box-shadow: 0 0 0 3px rgba(156, 77, 30, 0.2);
+}
+
+#filter button {
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #5c4333;
+  border: 1px solid #4a382d;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#filter button:hover {
+  background-color: #4a382d;
+}
+
+/* Додаткова кнопка дії у списку оголошень */
+.btn-action {
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 6px;
+  background-color: #9c4d1e;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid #823d14;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
+  transition: background-color 0.2s ease;
+}
+
+.btn-action:hover {
+  background-color: #823d14;
+}
+
+/* --------------------------------------------------------------------------
+   Крок 6: Стилізація карток оголошень (.card)
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #dcd1c3;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  box-shadow: 0 2px 5px rgba(50, 35, 20, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(50, 35, 20, 0.1);
+}
+
+.card-img {
+  width: 140px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e4d8ca;
+  background-color: #f7f3ee;
+  flex-shrink: 0;
+  display: block;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-content h3 {
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+  color: #3b281c;
+}
+
+.card-content p {
+  margin: 4px 0;
+  color: #55453a;
+}
+
+.card-price {
+  font-weight: 700;
+  color: #9c4d1e;
+  margin-top: 8px !important;
+  font-size: 1.05rem;
+}
+
+/* --------------------------------------------------------------------------
+   Крок 7: Стилізація aside та footer
+   -------------------------------------------------------------------------- */
+aside {
+  max-width: 960px;
+  margin: 0 auto 36px;
+  padding: 20px;
+  background-color: #fdfbf7;
+  border: 1px solid #dcd1c3;
+  border-left: 5px solid #9c4d1e;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(50, 35, 20, 0.04);
+}
+
+aside h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+  color: #3b281c;
+}
+
+aside p {
+  margin: 4px 0;
+  color: #55453a;
+}
+
+.aside-details {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #dcd1c3;
+}
+
+.aside-details p {
+  font-size: 0.95rem;
+}
+
+footer {
+  background-color: #ece3d6;
+  border-top: 1px solid #d8c8b4;
+  padding: 22px 20px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #705c4e;
+  margin-top: 40px;
+}
+
+footer p {
+  margin: 0;
+}
