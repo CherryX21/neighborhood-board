@@ -12,8 +12,17 @@
   <!-- Laptop keyboard deck -->
   <polygon points="50,165 70,150 250,150 270,165" fill="#8c786a"/>
   <rect x="40" y="165" width="240" height="8" rx="3" fill="#6e5d53"/>
-  <!-- Tool badge: Wrench & Gear -->
+  <!-- Tool badge: Symmetrical Gear -->
   <circle cx="230" cy="75" r="28" fill="#9c5123"/>
-  <path d="M222 65 C222 62, 226 58, 230 58 C234 58, 238 62, 238 65 L242 68 L246 66 L248 70 L245 74 L246 78 L250 80 L248 84 L244 83 L241 86 L242 90 L238 92 L236 88 L232 89 L230 93 L226 91 L228 87 L224 85 L220 87 L218 83 L222 81 L221 77 L217 75 L219 71 L223 72 Z" fill="#ffffff" opacity="0.9"/>
-  <circle cx="234" cy="75" r="5" fill="#9c5123"/>
+  <g fill="#ffffff">
+    <!-- 8 teeth created with 4 rotated identical bars -->
+    <rect x="226" y="59" width="8" height="32" rx="2"/>
+    <rect x="226" y="59" width="8" height="32" rx="2" transform="rotate(45 230 75)"/>
+    <rect x="226" y="59" width="8" height="32" rx="2" transform="rotate(90 230 75)"/>
+    <rect x="226" y="59" width="8" height="32" rx="2" transform="rotate(135 230 75)"/>
+    <!-- Gear center circle -->
+    <circle cx="230" cy="75" r="12"/>
+  </g>
+  <!-- Gear inner hole -->
+  <circle cx="230" cy="75" r="5" fill="#9c5123"/>
 </svg>
