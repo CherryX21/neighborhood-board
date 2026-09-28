@@ -7,21 +7,17 @@
 /* --------------------------------------------------------------------------
    1. Глобальне скидання та базові правила
    -------------------------------------------------------------------------- */
-
-/* Глобальний reset блокової моделі для передбачуваних розмірів */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Адаптивне масштабування зображень без виходу за межі контейнерів */
 img {
   max-width: 100%;
   height: auto;
 }
 
-/* Базова типографіка сторінки та крафтова палітра варіанта 18 */
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -32,7 +28,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   2. Базові мобільні стилі (Mobile-First, за замовчуванням <600px)
+   2. Базові мобільні стилі (Mobile-First, <600px)
    -------------------------------------------------------------------------- */
 
 /* Шапка сайту */
@@ -42,7 +38,6 @@ header.site-header {
   padding: 16px 20px;
 }
 
-/* Контейнер шапки: на мобільних вертикальний flex-стек */
 .header-container {
   width: 100%;
   margin: 0 auto;
@@ -65,7 +60,7 @@ header.site-header {
   text-decoration: none;
 }
 
-/* Категорії навігації: вертикальний стек із блочними посиланнями */
+/* Навігація категорій */
 .nav-categories {
   display: flex;
   flex-direction: column;
@@ -88,25 +83,40 @@ header.site-header {
   background-color: rgba(156, 77, 30, 0.12);
 }
 
-/* Кнопка «Додати оголошення» */
-.nav-btn-add {
+/* Акцентні кнопки дії */
+.nav-btn-add,
+.btn-action {
   display: block;
   text-align: center;
-  padding: 10px 18px;
   border-radius: 6px;
   background-color: #9c4d1e;
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
   border: 1px solid #823d14;
+}
+
+.nav-btn-add:hover,
+.btn-action:hover {
+  background-color: #823d14;
+  color: #ffffff;
+}
+
+.nav-btn-add {
+  padding: 10px 18px;
   box-shadow: 0 2px 4px rgba(130, 61, 20, 0.2);
   transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .nav-btn-add:hover {
-  background-color: #823d14;
-  color: #ffffff;
   box-shadow: 0 3px 6px rgba(130, 61, 20, 0.3);
+}
+
+.btn-action {
+  padding: 9px 16px;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Основний контент (main) */
@@ -123,13 +133,11 @@ section {
 section h2 {
   font-size: 1.35rem;
   color: #3b281c;
-  margin-top: 0;
-  margin-bottom: 16px;
+  margin: 0 0 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid #e2d3c1;
 }
 
-/* Заголовок секції оголошень та допоміжна кнопка дії */
 .ads-header {
   display: flex;
   flex-direction: column;
@@ -146,28 +154,9 @@ section h2 {
   border-bottom: none;
 }
 
-.ads-header p {
+.ads-header p,
+footer p {
   margin: 0;
-}
-
-.btn-action {
-  display: block;
-  text-align: center;
-  padding: 9px 16px;
-  border-radius: 6px;
-  background-color: #9c4d1e;
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid #823d14;
-  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-action:hover {
-  background-color: #823d14;
-  color: #ffffff;
 }
 
 /* Форма фільтрації */
@@ -229,7 +218,7 @@ section h2 {
   gap: 18px;
 }
 
-/* Картка оголошення (вертикальний flex-контейнер) */
+/* Картка оголошення */
 .card {
   background-color: #ffffff;
   border: 1px solid #dcd1c3;
@@ -266,18 +255,18 @@ section h2 {
 }
 
 .card-content h3 {
-  margin-top: 0;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
   font-size: 1.15rem;
   color: #3b281c;
 }
 
-.card-content p {
+.card-content p,
+aside p {
   margin: 4px 0;
   color: #55453a;
 }
 
-/* Блок ціни: притискання донизу картки */
+/* Притискання ціни донизу картки */
 .card-content .card-price {
   margin-top: auto;
   padding-top: 8px;
@@ -299,15 +288,9 @@ aside {
 }
 
 aside h2 {
-  margin-top: 0;
-  margin-bottom: 8px;
+  margin: 0 0 8px;
   font-size: 1.25rem;
   color: #3b281c;
-}
-
-aside p {
-  margin: 4px 0;
-  color: #55453a;
 }
 
 .aside-details {
@@ -331,25 +314,15 @@ footer {
   margin-top: 40px;
 }
 
-footer p {
-  margin: 0;
-}
-
 /* --------------------------------------------------------------------------
    3. Планшетний breakpoint (min-width: 600px)
    -------------------------------------------------------------------------- */
 @media (min-width: 600px) {
-  header.site-header {
-    padding: 16px 24px;
-  }
+  header.site-header { padding: 16px 24px; }
+  .header-container { align-items: center; }
+  main, aside { padding-left: 24px; padding-right: 24px; }
 
-  .header-container {
-    padding-left: 0;
-    padding-right: 0;
-    align-items: center;
-  }
-
-  /* Навігація категорій: плавний перехід у горизонтальний ряд */
+  /* Навігація категорій у горизонтальний ряд */
   .nav-categories {
     flex-direction: row;
     justify-content: center;
@@ -367,40 +340,25 @@ footer p {
     background-color: rgba(156, 77, 30, 0.08);
   }
 
-  .nav-btn-add {
-    display: inline-block;
-    width: auto;
-    align-self: center;
-  }
-
-  main,
-  aside {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .ads-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .btn-action {
+  .nav-btn-add,
+  .btn-action,
+  #filter select,
+  #filter button {
     display: inline-block;
     width: auto;
   }
 
-  /* Форма фільтрації: горизонтальне вирівнювання елементів */
+  .nav-btn-add { align-self: center; }
+
+  /* Горизонтальне вирівнювання форми та заголовка оголошень */
+  .ads-header,
   #filter form {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
   }
 
-  #filter select,
-  #filter button {
-    width: auto;
-  }
+  .ads-header { justify-content: space-between; }
+  #filter form { gap: 12px; }
 
   /* Сітка карток оголошень: 2 колонки */
   .cards {
@@ -413,11 +371,9 @@ footer p {
    4. Десктопний breakpoint (min-width: 1024px)
    -------------------------------------------------------------------------- */
 @media (min-width: 1024px) {
-  header.site-header {
-    padding: 18px 28px;
-  }
+  header.site-header { padding: 18px 28px; }
 
-  /* Шапка за варіантом 18: flex-рядок (лого, категорії, кнопка) із space-between */
+  /* Шапка за варіантом 18: flex-рядок із space-between */
   .header-container {
     max-width: 1140px;
     flex-direction: row;
@@ -427,29 +383,15 @@ footer p {
     gap: 20px;
   }
 
-  .logo {
-    font-size: 1.85rem;
-  }
+  .logo { font-size: 1.85rem; }
+  .nav-categories { gap: 12px; }
+  .nav-categories a { padding: 6px 14px; }
+  .nav-btn-add { align-self: auto; }
 
-  .nav-categories {
-    flex-direction: row;
-    gap: 12px;
-  }
-
-  .nav-categories a {
-    padding: 6px 14px;
-  }
-
-  .nav-btn-add {
-    width: auto;
-    align-self: auto;
-  }
-
-  /* Центрування та збільшення відступів контентної області */
-  main {
-    max-width: 1140px;
-    padding: 32px 0 16px;
-  }
+  /* Центрування та збільшення ширини контенту */
+  main, aside { max-width: 1140px; }
+  main { padding: 32px 0 16px; }
+  aside { padding: 24px; }
 
   /* Сітка карток оголошень за варіантом 18: 3 колонки */
   .cards {
@@ -457,12 +399,5 @@ footer p {
     gap: 24px;
   }
 
-  .card {
-    padding: 18px;
-  }
-
-  aside {
-    max-width: 1140px;
-    padding: 24px;
-  }
+  .card { padding: 18px; }
 }
