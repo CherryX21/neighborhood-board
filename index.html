@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- Шапка сайту -->
     <header class="site-header">
       <div class="header-container">
         <h1 class="logo"><a href="#">Дошка оголошень</a></h1>
@@ -23,7 +24,9 @@
       </div>
     </header>
 
+    <!-- Основний контент -->
     <main>
+      <!-- Секція фільтрації -->
       <section id="filter">
         <h2>Фільтр за категорією</h2>
 
@@ -41,6 +44,7 @@
         </form>
       </section>
 
+      <!-- Секція оголошень: адаптивна галерея карток (CSS Grid) -->
       <section id="ads">
         <div class="ads-header">
           <h2>Оголошення</h2>
@@ -50,6 +54,7 @@
         </div>
 
         <div class="cards">
+          <!-- Оголошення 1: Електроніка -->
           <article class="card" id="electronics">
             <img
               src="assets/img/monitor.svg"
@@ -63,6 +68,7 @@
             </div>
           </article>
 
+          <!-- Оголошення 2: Послуги -->
           <article class="card" id="services">
             <img
               src="assets/img/repair.svg"
@@ -76,6 +82,7 @@
             </div>
           </article>
 
+          <!-- Оголошення 3: Інше -->
           <article class="card" id="other">
             <img
               src="assets/img/books.svg"
@@ -89,6 +96,7 @@
             </div>
           </article>
 
+          <!-- Оголошення 4: Електроніка -->
           <article class="card">
             <img
               src="assets/img/monitor.svg"
@@ -102,6 +110,7 @@
             </div>
           </article>
 
+          <!-- Оголошення 5: Послуги -->
           <article class="card">
             <img
               src="assets/img/repair.svg"
@@ -115,6 +124,7 @@
             </div>
           </article>
 
+          <!-- Оголошення 6: Інше -->
           <article class="card">
             <img
               src="assets/img/books.svg"
@@ -131,6 +141,7 @@
       </section>
     </main>
 
+    <!-- Блок деталей обраного оголошення -->
     <aside aria-labelledby="selected-ad-title">
       <h2 id="selected-ad-title">Деталі обраного оголошення</h2>
       <p>Тут відображається детальна інформація про обране оголошення.</p>
@@ -141,6 +152,7 @@
       </div>
     </aside>
 
+    <!-- Підвал сайту -->
     <footer>
       <p>&copy; 2026 Артем Мінаєв. Навчальний проєкт.</p>
     </footer>
