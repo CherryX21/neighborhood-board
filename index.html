@@ -9,16 +9,17 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
+    <header class="site-header">
       <div class="header-container">
-        <h1>Дошка оголошень</h1>
+        <h1 class="logo"><a href="#">Дошка оголошень</a></h1>
 
-        <nav aria-label="Основна навігація">
+        <nav class="nav-categories" aria-label="Категорії оголошень">
           <a href="#electronics">Електроніка</a>
           <a href="#services">Послуги</a>
           <a href="#other">Інше</a>
-          <a href="#add-ad" class="nav-btn-add">Додати оголошення</a>
         </nav>
+
+        <a href="#add-ad" class="nav-btn-add">Додати оголошення</a>
       </div>
     </header>
 
@@ -41,50 +42,92 @@
       </section>
 
       <section id="ads">
-        <h2>Оголошення</h2>
+        <div class="ads-header">
+          <h2>Оголошення</h2>
+          <p id="add-ad">
+            <a href="#" class="btn-action">Додати нове оголошення</a>
+          </p>
+        </div>
 
-        <p id="add-ad">
-          <a href="#" class="btn-action">Додати нове оголошення</a>
-        </p>
+        <div class="cards">
+          <article class="card" id="electronics">
+            <img
+              src="assets/img/monitor.svg"
+              alt="24-дюймовий IPS-монітор"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Продам монітор</h3>
+              <p>24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель HDMI у комплекті.</p>
+              <p class="card-price">Ціна: 3500 грн.</p>
+            </div>
+          </article>
 
-        <article class="card" id="electronics">
-          <img
-            src="assets/img/monitor.svg"
-            alt="24-дюймовий IPS-монітор"
-            class="card-img"
-          />
-          <div class="card-content">
-            <h3>Продам монітор</h3>
-            <p>24-дюймовий IPS-монітор у хорошому стані.</p>
-            <p class="card-price">Ціна: 3500 грн.</p>
-          </div>
-        </article>
+          <article class="card" id="services">
+            <img
+              src="assets/img/repair.svg"
+              alt="Ремонт комп'ютерів"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Ремонт комп'ютерів</h3>
+              <p>Діагностика, очищення від пилу, заміна термопасти та налаштування ПК і ноутбуків.</p>
+              <p class="card-price">Ціна: від 300 грн.</p>
+            </div>
+          </article>
 
-        <article class="card" id="services">
-          <img
-            src="assets/img/repair.svg"
-            alt="Ремонт комп'ютерів"
-            class="card-img"
-          />
-          <div class="card-content">
-            <h3>Ремонт комп'ютерів</h3>
-            <p>Діагностика, очищення та налаштування ПК і ноутбуків.</p>
-            <p class="card-price">Ціна: від 300 грн.</p>
-          </div>
-        </article>
+          <article class="card" id="other">
+            <img
+              src="assets/img/books.svg"
+              alt="Навчальні книжки"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Віддам книжки</h3>
+              <p>Кілька підручників з веб-програмування та алгоритмів безкоштовно у добрі руки.</p>
+              <p class="card-price">Ціна: безкоштовно</p>
+            </div>
+          </article>
 
-        <article class="card" id="other">
-          <img
-            src="assets/img/books.svg"
-            alt="Навчальні книжки"
-            class="card-img"
-          />
-          <div class="card-content">
-            <h3>Віддам книжки</h3>
-            <p>Кілька навчальних книжок безкоштовно.</p>
-            <p class="card-price">Ціна: безкоштовно</p>
-          </div>
-        </article>
+          <article class="card">
+            <img
+              src="assets/img/monitor.svg"
+              alt="Бездротова клавіатура"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Механічна клавіатура</h3>
+              <p>Бездротова клавіатура з підсвіткою, червоні перемикачі, стан відмінний.</p>
+              <p class="card-price">Ціна: 1200 грн.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img
+              src="assets/img/repair.svg"
+              alt="Налаштування Wi-Fi"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Налаштування Wi-Fi</h3>
+              <p>Допомога з налаштуванням домашнього роутера, розширення покриття та захист.</p>
+              <p class="card-price">Ціна: від 250 грн.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img
+              src="assets/img/books.svg"
+              alt="Настільна гра"
+              class="card-img"
+            />
+            <div class="card-content">
+              <h3>Настільна гра</h3>
+              <p>Стратегічна настільна гра для компанії 2–5 осіб, повний комплект, чудовий стан.</p>
+              <p class="card-price">Ціна: 450 грн.</p>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
 

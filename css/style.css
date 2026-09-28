@@ -1,11 +1,11 @@
 /* ==========================================================================
-   Практична робота №3: Візуалізація структури за допомогою CSS
+   Практична робота №4: Адаптивна верстка (CSS Grid, Flexbox, медіа-запити)
    Варіант 18: Дошка сусідських оголошень
    Автор: Артем Мінаєв (група ІП-53)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Крок 2: Глобальний reset та налаштування блокової моделі (box model)
+   Крок 1 & Крок 2: Глобальний reset блокової моделі та базові правила
    -------------------------------------------------------------------------- */
 *,
 *::before,
@@ -13,9 +13,13 @@
   box-sizing: border-box;
 }
 
-/* --------------------------------------------------------------------------
-   Крок 3: Базова типографіка та кольорова палітра (нейтральна «дошкова»)
-   -------------------------------------------------------------------------- */
+/* Крок 7: Обмеження розмірів зображень для адаптивності */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Базова типографіка та нейтральна крафтова палітра варіанта 18 */
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -26,81 +30,88 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Крок 4: Стилізація header та навігації
+   Крок 4: Мобільні (базові) стилі (Mobile-First, до 599px)
+   Поза будь-яким @media все компонується в один зручний стовпчик
    -------------------------------------------------------------------------- */
-header {
+
+/* Шапка сайту */
+header.site-header {
   background: linear-gradient(180deg, #ece3d6 0%, #e3d7c5 100%);
   border-bottom: 2px solid #d8c8b4;
-  padding: 18px 24px;
+  padding: 16px 20px;
 }
 
 .header-container {
-  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  text-align: center;
 }
 
-header h1 {
+.logo {
   margin: 0;
-  font-size: 1.85rem;
-  color: #3b281c;
+  font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-header nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+.logo a {
+  color: #3b281c;
+  text-decoration: none;
 }
 
-header nav a {
+/* Категорії навігації: на мобільному стовпчик або компактний блок */
+.nav-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-categories a {
+  display: block;
   color: #5c4333;
   text-decoration: none;
   font-weight: 500;
-  padding: 6px 12px;
-  margin-right: 8px;
-  border-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background-color: rgba(92, 67, 51, 0.06);
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-header nav a:hover {
+.nav-categories a:hover {
   color: #9c4d1e;
-  background-color: rgba(156, 77, 30, 0.08);
+  background-color: rgba(156, 77, 30, 0.12);
 }
 
-/* Посилання «Додати оголошення» стилізоване як кнопка за варіантом 18 */
+/* Кнопка «Додати оголошення» за варіантом 18 (без використання !important) */
 .nav-btn-add {
-  display: inline-block;
+  display: block;
+  text-align: center;
   padding: 10px 18px;
   border-radius: 6px;
   background-color: #9c4d1e;
-  color: #ffffff !important;
-  text-decoration: none !important;
+  color: #ffffff;
+  text-decoration: none;
   font-weight: 600;
   border: 1px solid #823d14;
-  margin-right: 0 !important;
   box-shadow: 0 2px 4px rgba(130, 61, 20, 0.2);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .nav-btn-add:hover {
-  background-color: #823d14 !important;
+  background-color: #823d14;
+  color: #ffffff;
   box-shadow: 0 3px 6px rgba(130, 61, 20, 0.3);
 }
 
-/* --------------------------------------------------------------------------
-   Крок 5: Стилізація main та section
-   -------------------------------------------------------------------------- */
+/* Основний контент (main) */
 main {
-  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
-  padding: 28px 20px 12px;
+  padding: 24px 16px 12px;
 }
 
 section {
@@ -108,7 +119,7 @@ section {
 }
 
 section h2 {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   color: #3b281c;
   margin-top: 0;
   margin-bottom: 16px;
@@ -116,16 +127,55 @@ section h2 {
   border-bottom: 2px solid #e2d3c1;
 }
 
-/* Стилізація форми фільтрації */
+.ads-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2d3c1;
+}
+
+.ads-header h2 {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.ads-header p {
+  margin: 0;
+}
+
+.btn-action {
+  display: block;
+  text-align: center;
+  padding: 9px 16px;
+  border-radius: 6px;
+  background-color: #9c4d1e;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid #823d14;
+  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-action:hover {
+  background-color: #823d14;
+  color: #ffffff;
+}
+
+/* Форма фільтрації */
 #filter form {
   background-color: #ffffff;
   border: 1px solid #dcd1c3;
   border-radius: 8px;
-  padding: 16px 20px;
+  padding: 16px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
   box-shadow: 0 1px 3px rgba(50, 35, 20, 0.04);
 }
 
@@ -143,6 +193,7 @@ section h2 {
   color: #2e2620;
   outline: none;
   cursor: pointer;
+  width: 100%;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -152,7 +203,7 @@ section h2 {
 }
 
 #filter button {
-  padding: 8px 18px;
+  padding: 9px 18px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #ffffff;
@@ -160,6 +211,7 @@ section h2 {
   border: 1px solid #4a382d;
   border-radius: 6px;
   cursor: pointer;
+  width: 100%;
   transition: background-color 0.2s ease;
 }
 
@@ -167,38 +219,22 @@ section h2 {
   background-color: #4a382d;
 }
 
-/* Додаткова кнопка дії у списку оголошень */
-.btn-action {
-  display: inline-block;
-  padding: 9px 16px;
-  border-radius: 6px;
-  background-color: #9c4d1e;
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid #823d14;
-  margin-bottom: 8px;
-  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
-  transition: background-color 0.2s ease;
+/* Крок 3: Галерея карток на CSS Grid (мобільний - 1 колонка) */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
-.btn-action:hover {
-  background-color: #823d14;
-}
-
-/* --------------------------------------------------------------------------
-   Крок 6: Стилізація карток оголошень (.card)
-   -------------------------------------------------------------------------- */
+/* Картка оголошення */
 .card {
   background-color: #ffffff;
   border: 1px solid #dcd1c3;
   border-radius: 8px;
   padding: 16px;
-  margin-bottom: 18px;
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
   box-shadow: 0 2px 5px rgba(50, 35, 20, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -209,24 +245,27 @@ section h2 {
 }
 
 .card-img {
-  width: 140px;
-  height: 100px;
-  object-fit: cover;
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  padding: 6px;
   border-radius: 6px;
   border: 1px solid #e4d8ca;
   background-color: #f7f3ee;
-  flex-shrink: 0;
   display: block;
+  flex-shrink: 0;
 }
 
 .card-content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
 }
 
 .card-content h3 {
   margin-top: 0;
   margin-bottom: 6px;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: #3b281c;
 }
 
@@ -235,20 +274,20 @@ section h2 {
   color: #55453a;
 }
 
-.card-price {
+/* Ціна: специфічний селектор без використання !important */
+.card-content .card-price {
+  margin-top: auto;
+  padding-top: 8px;
   font-weight: 700;
   color: #9c4d1e;
-  margin-top: 8px !important;
   font-size: 1.05rem;
 }
 
-/* --------------------------------------------------------------------------
-   Крок 7: Стилізація aside та footer
-   -------------------------------------------------------------------------- */
+/* Бічна панель деталей (aside): на мобільному розташована під main */
 aside {
-  max-width: 960px;
+  width: 100%;
   margin: 0 auto 36px;
-  padding: 20px;
+  padding: 18px 16px;
   background-color: #fdfbf7;
   border: 1px solid #dcd1c3;
   border-left: 5px solid #9c4d1e;
@@ -278,6 +317,7 @@ aside p {
   font-size: 0.95rem;
 }
 
+/* Підвал */
 footer {
   background-color: #ece3d6;
   border-top: 1px solid #d8c8b4;
@@ -290,4 +330,136 @@ footer {
 
 footer p {
   margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Крок 5: Медіа-запит для планшета (min-width: 600px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 600px) {
+  header.site-header {
+    padding: 16px 24px;
+  }
+
+  .header-container {
+    padding-left: 0;
+    padding-right: 0;
+    align-items: center;
+  }
+
+  /* Навігація категорій переходить у горизонтальний ряд */
+  .nav-categories {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-categories a {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: transparent;
+  }
+
+  .nav-categories a:hover {
+    background-color: rgba(156, 77, 30, 0.08);
+  }
+
+  .nav-btn-add {
+    display: inline-block;
+    width: auto;
+    align-self: center;
+  }
+
+  main,
+  aside {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .ads-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-action {
+    display: inline-block;
+    width: auto;
+  }
+
+  #filter form {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #filter select,
+  #filter button {
+    width: auto;
+  }
+
+  /* Варіант 18: Планшет — картки оголошень у 2 колонки */
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Крок 6: Медіа-запит для десктопа (min-width: 1024px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  header.site-header {
+    padding: 18px 28px;
+  }
+
+  /* Варіант 18: Десктоп — header переходить у flex-рядок:
+     лого, nav категорій, кнопка «Додати оголошення» (justify-content: space-between) */
+  .header-container {
+    max-width: 1140px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    gap: 20px;
+  }
+
+  .logo {
+    font-size: 1.85rem;
+  }
+
+  .nav-categories {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .nav-categories a {
+    padding: 6px 14px;
+  }
+
+  .nav-btn-add {
+    width: auto;
+    align-self: auto;
+  }
+
+  /* Збільшення максимальної ширини та відступів контенту на десктопі */
+  main {
+    max-width: 1140px;
+    padding: 32px 0 16px;
+  }
+
+  /* Варіант 18: Десктоп — картки оголошень у 3 колонки */
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  aside {
+    max-width: 1140px;
+    padding: 24px;
+  }
 }
