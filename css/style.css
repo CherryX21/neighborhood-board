@@ -1,11 +1,77 @@
 /* ==========================================================================
-   Практична робота №4: Адаптивна верстка (CSS Grid, Flexbox, медіа-запити)
+   Практична робота №5: Дизайн вебзастосунку за чіткими та нечіткими критеріями
    Варіант 18: Дошка сусідських оголошень
    Автор: Артем Мінаєв (група ІП-53)
+
+   Чітка вимога:
+   - Кожна категорія оголошень має окремий колір позначки (badge) з контрастом WCAG AA ≥ 4.5:1.
+   Нечітка вимога:
+   - «Має виглядати як дружня спільнота, а не барахолка» — охайна, не перевантажена
+     композиція карток із достатнім «повітрям» (whitespace), делікатною глибиною та затишною палітрою.
+   Деталі дизайну:
+   - Дата оголошення оформлена дрібним, ненав'язливим текстом.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Глобальне скидання та базові правила
+   1. Дизайн-токени (змінні колірної палітри, типографіки та геометрії)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Колірна схема 60-30-10:
+     - 60% нейтральний фон і простір (#f8f6f2 / #ffffff)
+     - 30% вторинні та структурні тони (#544336, #e2d6c7)
+     - 10% теплий акцент бренду (#9c4314) */
+  --color-primary: #9c4314;
+  --color-primary-hover: #82350e;
+  --color-primary-focus: rgba(156, 67, 20, 0.25);
+  
+  --color-secondary: #544336;
+  --color-secondary-hover: #3d2f25;
+
+  --color-bg-page: #f8f6f2;
+  --color-bg-card: #ffffff;
+  --color-bg-subtle: #fbf9f6;
+  --color-bg-header: #ede4d7;
+  --color-bg-header-bottom: #e4d7c5;
+
+  --color-text-main: #241d17;       /* Контраст на білому фоні 16.6:1 (WCAG AAA) */
+  --color-text-muted: #5e544c;      /* Контраст на білому фоні 7.4:1 (WCAG AA) */
+  --color-text-date: #675c54;       /* Контраст на білому фоні 6.5:1 (WCAG AA) */
+  
+  --color-border: #e2d6c7;
+  --color-border-subtle: #eee6db;
+  --color-border-focus: #9c4314;
+
+  /* Позначки категорій (Чітка вимога варіанта №18):
+     Всі кольори тексту перевірено на коефіцієнт контрасту WCAG AA ≥ 4.5:1 */
+  --badge-electronics-bg: #e3edfc;
+  --badge-electronics-text: #124da0;   /* Контраст 6.85:1 */
+  --badge-electronics-border: #bdd3f8;
+
+  --badge-services-bg: #dcfce7;
+  --badge-services-text: #115e34;      /* Контраст 7.15:1 */
+  --badge-services-border: #a7f3d0;
+
+  --badge-other-bg: #fef3c7;
+  --badge-other-text: #78350f;         /* Контраст 8.15:1 */
+  --badge-other-border: #fde68a;
+
+  /* Тіні для затишного відчуття «дружньої спільноти» */
+  --shadow-sm: 0 1px 3px rgba(40, 28, 18, 0.05);
+  --shadow-card: 0 2px 8px rgba(40, 28, 18, 0.05), 0 1px 2px rgba(40, 28, 18, 0.03);
+  --shadow-card-hover: 0 8px 20px rgba(40, 28, 18, 0.08), 0 3px 6px rgba(40, 28, 18, 0.04);
+
+  /* Геометрія: м'які округлення для приязного образу */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Типографічна гарнітура */
+  --font-family-base: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   2. Глобальне скидання та базові стилі
    -------------------------------------------------------------------------- */
 *,
 *::before,
@@ -20,22 +86,25 @@ img {
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
-  line-height: 1.5;
-  color: #2e2620;
-  background-color: #f6f1ea;
+  line-height: 1.55;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* --------------------------------------------------------------------------
-   2. Базові мобільні стилі (Mobile-First, <600px)
+   3. Базові мобільні стилі (Mobile-First, <600px)
    -------------------------------------------------------------------------- */
 
 /* Шапка сайту */
 header.site-header {
-  background: linear-gradient(180deg, #ece3d6 0%, #e3d7c5 100%);
-  border-bottom: 2px solid #d8c8b4;
+  background: linear-gradient(180deg, var(--color-bg-header) 0%, var(--color-bg-header-bottom) 100%);
+  border-bottom: 1px solid var(--color-border);
   padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
 }
 
 .header-container {
@@ -48,6 +117,13 @@ header.site-header {
   text-align: center;
 }
 
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
 .logo {
   margin: 0;
   font-size: 1.6rem;
@@ -56,11 +132,23 @@ header.site-header {
 }
 
 .logo a {
-  color: #3b281c;
+  color: var(--color-text-main);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-/* Навігація категорій */
+.logo a:hover {
+  color: var(--color-primary);
+}
+
+.site-tagline {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Навігація категорій у шапці */
 .nav-categories {
   display: flex;
   flex-direction: column;
@@ -69,57 +157,59 @@ header.site-header {
 
 .nav-categories a {
   display: block;
-  color: #5c4333;
+  color: var(--color-secondary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.9375rem;
   padding: 8px 14px;
-  border-radius: 6px;
-  background-color: rgba(92, 67, 51, 0.06);
+  border-radius: var(--radius-sm);
+  background-color: rgba(84, 67, 54, 0.06);
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .nav-categories a:hover {
-  color: #9c4d1e;
-  background-color: rgba(156, 77, 30, 0.12);
+  color: var(--color-primary);
+  background-color: rgba(156, 67, 20, 0.12);
 }
 
-/* Акцентні кнопки дії */
+/* Акцентні кнопки дій */
 .nav-btn-add,
 .btn-action {
   display: block;
   text-align: center;
-  border-radius: 6px;
-  background-color: #9c4d1e;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
-  border: 1px solid #823d14;
-}
-
-.nav-btn-add:hover,
-.btn-action:hover {
-  background-color: #823d14;
-  color: #ffffff;
+  border: 1px solid var(--color-primary-hover);
 }
 
 .nav-btn-add {
   padding: 10px 18px;
-  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.2);
+  font-size: 0.9375rem;
+  box-shadow: 0 2px 4px rgba(156, 67, 20, 0.25);
   transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+.nav-btn-add:hover,
+.btn-action:hover {
+  background-color: var(--color-primary-hover);
+  color: #ffffff;
+}
+
 .nav-btn-add:hover {
-  box-shadow: 0 3px 6px rgba(130, 61, 20, 0.3);
+  box-shadow: 0 4px 8px rgba(156, 67, 20, 0.35);
 }
 
 .btn-action {
   padding: 9px 16px;
-  font-size: 0.95rem;
-  box-shadow: 0 2px 4px rgba(130, 61, 20, 0.15);
+  font-size: 0.9375rem;
+  box-shadow: 0 2px 4px rgba(156, 67, 20, 0.2);
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Основний контент (main) */
+/* Основний контент сторінки */
 main {
   width: 100%;
   margin: 0 auto;
@@ -127,15 +217,16 @@ main {
 }
 
 section {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 section h2 {
-  font-size: 1.35rem;
-  color: #3b281c;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text-main);
   margin: 0 0 16px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #e2d3c1;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .ads-header {
@@ -143,9 +234,9 @@ section h2 {
   flex-direction: column;
   align-items: stretch;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #e2d3c1;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .ads-header h2 {
@@ -161,28 +252,30 @@ footer p {
 
 /* Форма фільтрації */
 #filter form {
-  background-color: #ffffff;
-  border: 1px solid #dcd1c3;
-  border-radius: 8px;
-  padding: 16px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.04);
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
 }
 
 #filter label {
   font-weight: 600;
-  color: #4a382d;
+  font-size: 0.9375rem;
+  color: var(--color-secondary);
 }
 
 #filter select {
-  padding: 8px 14px;
-  font-size: 0.95rem;
-  border: 1px solid #cfbfac;
-  border-radius: 6px;
-  background-color: #fdfbf8;
-  color: #2e2620;
+  padding: 9px 14px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-main);
   outline: none;
   cursor: pointer;
   width: 100%;
@@ -190,60 +283,76 @@ footer p {
 }
 
 #filter select:focus {
-  border-color: #9c4d1e;
-  box-shadow: 0 0 0 3px rgba(156, 77, 30, 0.2);
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-focus);
 }
 
 #filter button {
   padding: 9px 18px;
-  font-size: 0.95rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #5c4333;
-  border: 1px solid #4a382d;
-  border-radius: 6px;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-secondary-hover);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   width: 100%;
   transition: background-color 0.2s ease;
 }
 
 #filter button:hover {
-  background-color: #4a382d;
+  background-color: var(--color-secondary-hover);
 }
+
+/* --------------------------------------------------------------------------
+   ДИЗАЙН-РІШЕННЯ (Варіант 18 — обґрунтування нечіткої вимоги):
+   «Має виглядати як дружня спільнота, а не барахолка»:
+   1. Замість агресивних, строкатих цінників та перевантажених блоків барахолки
+      застосовано концепцію «повітря» (whitespace): збільшено внутрішній
+      відступ карток (padding: 20px) та міжкартковий простір (gap: 20px/24px/28px).
+   2. Кожна картка має делікатну багаторівневу тінь (ambient elevation) і плавні
+      закруглені кути (border-radius: 12px), що відокремлює елементи без кричущих рамок.
+   3. Категорії виділені спокійними пастельними плашками (badge) з високим контрастом
+      (≥6.8:1), а дата оголошення винесена ненав'язливим дрібним шрифтом, створюючи
+      відчуття живого, турботливого та охайного сусідського ком'юніті.
+   -------------------------------------------------------------------------- */
 
 /* Галерея карток на CSS Grid (мобільний: 1 колонка) */
 .cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 20px;
 }
 
-/* Картка оголошення */
+/* Картка оголошення: естетика доброзичливого затишку */
 .card {
-  background-color: #ffffff;
-  border: 1px solid #dcd1c3;
-  border-radius: 8px;
-  padding: 16px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 2px 5px rgba(50, 35, 20, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 14px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(50, 35, 20, 0.1);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-border);
 }
 
+/* Зображення картки: охайна вітринна презентація */
 .card-img {
   width: 100%;
   height: 160px;
   object-fit: contain;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #e4d8ca;
-  background-color: #f7f3ee;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-subtle);
   display: block;
   flex-shrink: 0;
 }
@@ -254,24 +363,76 @@ footer p {
   flex: 1;
 }
 
+/* Інформаційний рядок картки: бейдж категорії та дата */
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Чітка вимога: окремий колір позначки (badge) для кожної категорії */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.badge-electronics {
+  background-color: var(--badge-electronics-bg);
+  color: var(--badge-electronics-text);
+  border: 1px solid var(--badge-electronics-border);
+}
+
+.badge-services {
+  background-color: var(--badge-services-bg);
+  color: var(--badge-services-text);
+  border: 1px solid var(--badge-services-border);
+}
+
+.badge-other {
+  background-color: var(--badge-other-bg);
+  color: var(--badge-other-text);
+  border: 1px solid var(--badge-other-border);
+}
+
+/* Деталь дизайну: дата оголошення — дрібний, ненав'язливий текст */
+.card-date {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--color-text-date);
+  white-space: nowrap;
+}
+
 .card-content h3 {
   margin: 0 0 6px;
   font-size: 1.15rem;
-  color: #3b281c;
+  font-weight: 600;
+  color: var(--color-text-main);
+  line-height: 1.35;
 }
 
 .card-content p,
 aside p {
   margin: 4px 0;
-  color: #55453a;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
 /* Притискання ціни донизу картки */
 .card-content .card-price {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 10px;
   font-weight: 700;
-  color: #9c4d1e;
+  color: var(--color-primary);
   font-size: 1.05rem;
 }
 
@@ -279,48 +440,67 @@ aside p {
 aside {
   width: 100%;
   margin: 0 auto 36px;
-  padding: 18px 16px;
-  background-color: #fdfbf7;
-  border: 1px solid #dcd1c3;
-  border-left: 5px solid #9c4d1e;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(50, 35, 20, 0.04);
+  padding: 20px 18px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 aside h2 {
   margin: 0 0 8px;
   font-size: 1.25rem;
-  color: #3b281c;
+  color: var(--color-text-main);
 }
 
 .aside-details {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px dashed #dcd1c3;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .aside-details p {
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
+  margin: 0;
+  color: var(--color-text-main);
+}
+
+.aside-details p strong {
+  color: var(--color-secondary);
 }
 
 /* Підвал сайту */
 footer {
-  background-color: #ece3d6;
-  border-top: 1px solid #d8c8b4;
-  padding: 22px 20px;
+  background-color: var(--color-bg-header);
+  border-top: 1px solid var(--color-border);
+  padding: 24px 20px;
   text-align: center;
   font-size: 0.875rem;
-  color: #705c4e;
-  margin-top: 40px;
+  color: var(--color-text-muted);
+  margin-top: 48px;
 }
 
 /* --------------------------------------------------------------------------
-   3. Планшетний breakpoint (min-width: 600px)
+   4. Планшетний breakpoint (min-width: 600px)
    -------------------------------------------------------------------------- */
 @media (min-width: 600px) {
-  header.site-header { padding: 16px 24px; }
-  .header-container { align-items: center; }
-  main, aside { padding-left: 24px; padding-right: 24px; }
+  header.site-header {
+    padding: 16px 24px;
+  }
+
+  .header-container {
+    align-items: center;
+  }
+
+  main,
+  aside {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 
   /* Навігація категорій у горизонтальний ряд */
   .nav-categories {
@@ -332,12 +512,12 @@ footer {
 
   .nav-categories a {
     display: inline-block;
-    padding: 6px 12px;
+    padding: 6px 14px;
     background-color: transparent;
   }
 
   .nav-categories a:hover {
-    background-color: rgba(156, 77, 30, 0.08);
+    background-color: rgba(156, 67, 20, 0.08);
   }
 
   .nav-btn-add,
@@ -348,7 +528,9 @@ footer {
     width: auto;
   }
 
-  .nav-btn-add { align-self: center; }
+  .nav-btn-add {
+    align-self: center;
+  }
 
   /* Горизонтальне вирівнювання форми та заголовка оголошень */
   .ads-header,
@@ -357,21 +539,28 @@ footer {
     align-items: center;
   }
 
-  .ads-header { justify-content: space-between; }
-  #filter form { gap: 12px; }
+  .ads-header {
+    justify-content: space-between;
+  }
 
-  /* Сітка карток оголошень: 2 колонки */
+  #filter form {
+    gap: 14px;
+  }
+
+  /* Сітка карток оголошень: 2 колонки з розширеним простором */
   .cards {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 24px;
   }
 }
 
 /* --------------------------------------------------------------------------
-   4. Десктопний breakpoint (min-width: 1024px)
+   5. Десктопний breakpoint (min-width: 1024px)
    -------------------------------------------------------------------------- */
 @media (min-width: 1024px) {
-  header.site-header { padding: 18px 28px; }
+  header.site-header {
+    padding: 18px 32px;
+  }
 
   /* Шапка за варіантом 18: flex-рядок із space-between */
   .header-container {
@@ -380,24 +569,56 @@ footer {
     justify-content: space-between;
     align-items: center;
     text-align: left;
-    gap: 20px;
-  }
-
-  .logo { font-size: 1.85rem; }
-  .nav-categories { gap: 12px; }
-  .nav-categories a { padding: 6px 14px; }
-  .nav-btn-add { align-self: auto; }
-
-  /* Центрування та збільшення ширини контенту */
-  main, aside { max-width: 1140px; }
-  main { padding: 32px 0 16px; }
-  aside { padding: 24px; }
-
-  /* Сітка карток оголошень за варіантом 18: 3 колонки */
-  .cards {
-    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
 
-  .card { padding: 18px; }
+  .logo-wrapper {
+    align-items: flex-start;
+  }
+
+  .logo {
+    font-size: 1.85rem;
+  }
+
+  .nav-categories {
+    gap: 12px;
+  }
+
+  .nav-categories a {
+    padding: 7px 16px;
+    font-size: 1rem;
+  }
+
+  .nav-btn-add {
+    align-self: auto;
+    padding: 11px 22px;
+  }
+
+  /* Центрування та збільшення ширини контенту */
+  main,
+  aside {
+    max-width: 1140px;
+  }
+
+  main {
+    padding: 36px 0 20px;
+  }
+
+  section h2 {
+    font-size: 1.5rem;
+  }
+
+  aside {
+    padding: 26px;
+  }
+
+  /* Сітка карток оголошень за варіантом 18: 3 колонки з максимальним комфортом */
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .card {
+    padding: 22px;
+  }
 }

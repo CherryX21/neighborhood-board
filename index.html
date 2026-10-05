@@ -4,7 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Дошка оголошень</title>
+    <title>Дошка сусідських оголошень</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans для сучасної та дружньої типографіки -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -12,7 +20,10 @@
     <!-- Шапка сайту -->
     <header class="site-header">
       <div class="header-container">
-        <h1 class="logo"><a href="#">Дошка оголошень</a></h1>
+        <div class="logo-wrapper">
+          <h1 class="logo"><a href="#">Дошка оголошень</a></h1>
+          <span class="site-tagline">Спільнота нашого району</span>
+        </div>
 
         <nav class="nav-categories" aria-label="Категорії оголошень">
           <a href="#electronics">Електроніка</a>
@@ -62,6 +73,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-electronics">Електроніка</span>
+                <time class="card-date" datetime="2026-10-05T10:20">Сьогодні, 10:20</time>
+              </div>
               <h3>Продам монітор</h3>
               <p>24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель HDMI у комплекті.</p>
               <p class="card-price">Ціна: 3500 грн.</p>
@@ -76,6 +91,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-services">Послуги</span>
+                <time class="card-date" datetime="2026-10-05T09:45">Сьогодні, 09:45</time>
+              </div>
               <h3>Ремонт комп'ютерів</h3>
               <p>Діагностика, очищення від пилу, заміна термопасти та налаштування ПК і ноутбуків.</p>
               <p class="card-price">Ціна: від 300 грн.</p>
@@ -90,6 +109,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-other">Інше</span>
+                <time class="card-date" datetime="2026-10-04T18:15">Вчора, 18:15</time>
+              </div>
               <h3>Віддам книжки</h3>
               <p>Кілька підручників з веб-програмування та алгоритмів безкоштовно у добрі руки.</p>
               <p class="card-price">Ціна: безкоштовно</p>
@@ -104,6 +127,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-electronics">Електроніка</span>
+                <time class="card-date" datetime="2026-10-04T14:00">Вчора, 14:00</time>
+              </div>
               <h3>Механічна клавіатура</h3>
               <p>Бездротова клавіатура з підсвіткою, червоні перемикачі, стан відмінний.</p>
               <p class="card-price">Ціна: 1200 грн.</p>
@@ -118,6 +145,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-services">Послуги</span>
+                <time class="card-date" datetime="2026-10-03">3 жовтня 2026</time>
+              </div>
               <h3>Налаштування Wi-Fi</h3>
               <p>Допомога з налаштуванням домашнього роутера, розширення покриття та захист.</p>
               <p class="card-price">Ціна: від 250 грн.</p>
@@ -132,6 +163,10 @@
               class="card-img"
             />
             <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-other">Інше</span>
+                <time class="card-date" datetime="2026-10-02">2 жовтня 2026</time>
+              </div>
               <h3>Настільна гра</h3>
               <p>Стратегічна настільна гра для компанії 2–5 осіб, повний комплект, чудовий стан.</p>
               <p class="card-price">Ціна: 450 грн.</p>
@@ -147,6 +182,8 @@
       <p>Тут відображається детальна інформація про обране оголошення.</p>
       <div class="aside-details">
         <p><strong>Оголошення:</strong> Продам монітор</p>
+        <p><strong>Категорія:</strong> <span class="badge badge-electronics">Електроніка</span></p>
+        <p><strong>Опубліковано:</strong> <time class="card-date">Сьогодні, 10:20</time></p>
         <p><strong>Контакт:</strong> +380 (99) 123-45-67</p>
         <p><strong>Локація:</strong> Корпус ФІОТ / Політехнічна</p>
       </div>
