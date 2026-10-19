@@ -326,6 +326,41 @@ footer p {
   border-color: var(--color-border);
 }
 
+/* Стилізація застарілих оголошень (daysAgo > 14) */
+.card.outdated {
+  opacity: 0.72;
+  border-style: dashed;
+  background-color: var(--color-bg-subtle);
+}
+
+.card.outdated:hover {
+  opacity: 0.95;
+}
+
+.card.outdated .card-date {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+/* Поле категорії в динамічній картці (h3 - title, p - category) */
+.card-category {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 2px 0 6px;
+}
+
+/* Підсумковий лічильник активних оголошень (#listings-count) */
+.ads-count {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
 /* Зображення картки: охайна вітринна презентація */
 .card-img {
   width: 100%;

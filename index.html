@@ -15,7 +15,7 @@
     />
 
     <link rel="stylesheet" href="css/style.css" />
-    <script src="script.js" defer></script>
+    <script src="js/script.js" defer></script>
   </head>
   <body>
     <!-- Шапка сайту -->
@@ -60,14 +60,15 @@
       <section id="ads">
         <div class="ads-header">
           <h2>Оголошення</h2>
+          <p id="listings-count" class="ads-count">Активних оголошень: 0</p>
           <p id="add-ad">
             <a href="#" class="btn-action">Додати нове оголошення</a>
           </p>
         </div>
 
-        <div class="cards">
-          <!-- Оголошення 1: Електроніка -->
-          <article class="card" id="electronics">
+        <div class="cards" id="listings-list">
+          <!-- Статичний шаблон оголошення (замінюється динамічним списком) -->
+          <article class="card card-placeholder" id="placeholder-ad">
             <img
               src="assets/img/monitor.svg"
               alt="24-дюймовий IPS-монітор"
@@ -81,96 +82,6 @@
               <h3>Продам монітор</h3>
               <p>24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель HDMI у комплекті.</p>
               <p class="card-price">Ціна: 3500 грн.</p>
-            </div>
-          </article>
-
-          <!-- Оголошення 2: Послуги -->
-          <article class="card" id="services">
-            <img
-              src="assets/img/repair.svg"
-              alt="Ремонт комп'ютерів"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-services">Послуги</span>
-                <time class="card-date" datetime="2026-10-05T09:45">Сьогодні, 09:45</time>
-              </div>
-              <h3>Ремонт комп'ютерів</h3>
-              <p>Діагностика, очищення від пилу, заміна термопасти та налаштування ПК і ноутбуків.</p>
-              <p class="card-price">Ціна: від 300 грн.</p>
-            </div>
-          </article>
-
-          <!-- Оголошення 3: Інше -->
-          <article class="card" id="other">
-            <img
-              src="assets/img/books.svg"
-              alt="Навчальні книжки"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-other">Інше</span>
-                <time class="card-date" datetime="2026-10-04T18:15">Вчора, 18:15</time>
-              </div>
-              <h3>Віддам книжки</h3>
-              <p>Кілька підручників з веб-програмування та алгоритмів безкоштовно у добрі руки.</p>
-              <p class="card-price">Ціна: безкоштовно</p>
-            </div>
-          </article>
-
-          <!-- Оголошення 4: Електроніка -->
-          <article class="card">
-            <img
-              src="assets/img/monitor.svg"
-              alt="Бездротова клавіатура"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-electronics">Електроніка</span>
-                <time class="card-date" datetime="2026-10-04T14:00">Вчора, 14:00</time>
-              </div>
-              <h3>Механічна клавіатура</h3>
-              <p>Бездротова клавіатура з підсвіткою, червоні перемикачі, стан відмінний.</p>
-              <p class="card-price">Ціна: 1200 грн.</p>
-            </div>
-          </article>
-
-          <!-- Оголошення 5: Послуги -->
-          <article class="card">
-            <img
-              src="assets/img/repair.svg"
-              alt="Налаштування Wi-Fi"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-services">Послуги</span>
-                <time class="card-date" datetime="2026-10-03">3 жовтня 2026</time>
-              </div>
-              <h3>Налаштування Wi-Fi</h3>
-              <p>Допомога з налаштуванням домашнього роутера, розширення покриття та захист.</p>
-              <p class="card-price">Ціна: від 250 грн.</p>
-            </div>
-          </article>
-
-          <!-- Оголошення 6: Інше -->
-          <article class="card">
-            <img
-              src="assets/img/books.svg"
-              alt="Настільна гра"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-other">Інше</span>
-                <time class="card-date" datetime="2026-10-02">2 жовтня 2026</time>
-              </div>
-              <h3>Настільна гра</h3>
-              <p>Стратегічна настільна гра для компанії 2–5 осіб, повний комплект, чудовий стан.</p>
-              <p class="card-price">Ціна: 450 грн.</p>
             </div>
           </article>
         </div>
