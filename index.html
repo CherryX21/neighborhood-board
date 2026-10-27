@@ -32,7 +32,15 @@
           <a href="#other">Інше</a>
         </nav>
 
-        <a href="#add-ad" class="nav-btn-add">Додати оголошення</a>
+        <button
+          type="button"
+          class="nav-btn-add"
+          data-toggle-form
+          aria-controls="add-ad-form"
+          aria-expanded="false"
+        >
+          Додати оголошення
+        </button>
       </div>
     </header>
 
@@ -42,7 +50,7 @@
       <section id="filter">
         <h2>Фільтр за категорією</h2>
 
-        <form>
+        <form id="filter-form">
           <label for="category">Категорія:</label>
 
           <select id="category" name="category">
@@ -62,9 +70,82 @@
           <h2>Оголошення</h2>
           <p id="listings-count" class="ads-count">Активних оголошень: 0</p>
           <p id="add-ad">
-            <a href="#" class="btn-action">Додати нове оголошення</a>
+            <button
+              type="button"
+              class="btn-action"
+              data-toggle-form
+              aria-controls="add-ad-form"
+              aria-expanded="false"
+            >
+              Додати нове оголошення
+            </button>
           </p>
         </div>
+
+        <!-- Повідомлення про результат додавання (озвучується скрінрідерами) -->
+        <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+
+        <!-- Форма додавання оголошення: за замовчуванням прихована, показується класом .visible -->
+        <form id="add-ad-form" class="ad-form" aria-labelledby="add-ad-form-title">
+          <h3 id="add-ad-form-title">Нове оголошення</h3>
+
+          <div class="form-field">
+            <label for="ad-title">Назва оголошення <span class="required-mark" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="ad-title"
+              name="title"
+              required
+              maxlength="100"
+              autocomplete="off"
+              aria-describedby="ad-title-error"
+            />
+            <p id="ad-title-error" class="field-error"></p>
+          </div>
+
+          <div class="form-field">
+            <label for="ad-category">Категорія <span class="required-mark" aria-hidden="true">*</span></label>
+            <select id="ad-category" name="category" required aria-describedby="ad-category-error">
+              <option value="">Оберіть категорію</option>
+              <option value="electronics">Електроніка</option>
+              <option value="services">Послуги</option>
+              <option value="other">Інше</option>
+            </select>
+            <p id="ad-category-error" class="field-error"></p>
+          </div>
+
+          <div class="form-field">
+            <label for="ad-price">Ціна, грн</label>
+            <input
+              type="number"
+              id="ad-price"
+              name="price"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              placeholder="0"
+              aria-describedby="ad-price-hint ad-price-error"
+            />
+            <p id="ad-price-hint" class="field-hint">Необов'язково. Порожнє поле або 0 означає «безкоштовно».</p>
+            <p id="ad-price-error" class="field-error"></p>
+          </div>
+
+          <div class="form-field">
+            <label for="ad-description">Опис</label>
+            <textarea
+              id="ad-description"
+              name="description"
+              rows="4"
+              maxlength="200"
+              aria-describedby="ad-description-counter"
+            ></textarea>
+            <p id="ad-description-counter" class="char-counter">Залишилось символів: 200</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">Опублікувати</button>
+          </div>
+        </form>
 
         <div class="cards" id="listings-list">
           <!-- Статичний шаблон оголошення (замінюється динамічним списком) -->

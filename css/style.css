@@ -639,3 +639,187 @@ footer {
     padding: 22px;
   }
 }
+
+/* 6. Практична робота №8: кнопки дій, форма додавання та валідація */
+
+/* Токени для станів помилки та успіху (контраст на білому фоні 6.5:1 та 7.2:1) */
+:root {
+  --color-error: #b3261e;
+  --color-error-bg: #fdecea;
+  --color-success-text: #115e34;
+  --color-success-bg: #dcfce7;
+  --color-success-border: #a7f3d0;
+}
+
+/* Кнопки <button> повинні виглядати так само, як раніше посилання-кнопки */
+button.nav-btn-add,
+button.btn-action {
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+button.nav-btn-add:focus-visible,
+button.btn-action:focus-visible,
+.btn-submit:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+/* Повідомлення про успішне додавання оголошення */
+.form-status {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-success-text);
+  background-color: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  border-radius: var(--radius-sm);
+}
+
+.form-status:empty {
+  display: none;
+}
+
+/* Форма додавання: прихована за замовчуванням, показується класом .visible */
+.ad-form {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+  margin: 0 0 28px;
+  padding: 20px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.ad-form.visible {
+  display: flex;
+}
+
+.ad-form h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-secondary);
+}
+
+.required-mark {
+  color: var(--color-error);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 9px 14px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-focus);
+}
+
+/* Поле з помилкою позначається атрибутом aria-invalid зі скрипта */
+.form-field [aria-invalid="true"] {
+  border-color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+.field-hint,
+.field-error,
+.char-counter {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.field-hint {
+  color: var(--color-text-muted);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+/* Лічильник символів: виділяється, коли залишилося мало місця */
+.char-counter {
+  text-align: right;
+  color: var(--color-text-muted);
+}
+
+.char-counter.near-limit {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-submit {
+  padding: 10px 22px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary-hover);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(156, 67, 20, 0.2);
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Опис в динамічній картці оголошення */
+.card-content .card-description {
+  margin: 6px 0 4px;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 600px) {
+  .ad-form {
+    padding: 24px;
+  }
+}
