@@ -69,17 +69,25 @@
         <div class="ads-header">
           <h2>Оголошення</h2>
           <p id="listings-count" class="ads-count">Активних оголошень: 0</p>
-          <p id="add-ad">
-            <button
-              type="button"
-              class="btn-action"
-              data-toggle-form
-              aria-controls="add-ad-form"
-              aria-expanded="false"
-            >
-              Додати нове оголошення
-            </button>
-          </p>
+          <div class="ads-actions">
+            <!-- Кнопка повторного запиту до API без перезавантаження сторінки -->
+            <p id="refresh-ad">
+              <button type="button" id="refresh-button" class="btn-action">
+                Оновити
+              </button>
+            </p>
+            <p id="add-ad">
+              <button
+                type="button"
+                class="btn-action"
+                data-toggle-form
+                aria-controls="add-ad-form"
+                aria-expanded="false"
+              >
+                Додати нове оголошення
+              </button>
+            </p>
+          </div>
         </div>
 
         <!-- Повідомлення про результат додавання (озвучується скрінрідерами) -->
@@ -146,6 +154,23 @@
             <button type="submit" class="btn-submit">Опублікувати</button>
           </div>
         </form>
+
+        <!-- Стан завантаження: показується до отримання відповіді від API -->
+        <p id="loading-indicator" class="loading-indicator" role="status" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          Завантаження оголошень…
+        </p>
+
+        <!-- Помилка завантаження: role="alert" озвучується скрінрідерами -->
+        <div id="error-message" class="error-message" role="alert" hidden>
+          <div class="error-text">
+            <p class="error-title">Оголошення тимчасово недоступні. Спробуйте пізніше.</p>
+            <p id="error-details" class="error-details"></p>
+          </div>
+          <button type="button" id="retry-button" class="btn-action">
+            Спробувати знову
+          </button>
+        </div>
 
         <div class="cards" id="listings-list">
           <!-- Статичний шаблон оголошення (замінюється динамічним списком) -->

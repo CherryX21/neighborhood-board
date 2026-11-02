@@ -1,5 +1,4 @@
 /* ==========================================================================
-   Практична робота №5: Візуальний дизайн вебзастосунку
    Варіант 18: Дошка сусідських оголошень
    Автор: Артем Мінаєв (група ІП-53)
    ========================================================================== */
@@ -15,7 +14,7 @@
   --color-primary: #9c4314;
   --color-primary-hover: #82350e;
   --color-primary-focus: rgba(156, 67, 20, 0.25);
-  
+
   --color-secondary: #544336;
   --color-secondary-hover: #3d2f25;
 
@@ -25,31 +24,33 @@
   --color-bg-header: #ede4d7;
   --color-bg-header-bottom: #e4d7c5;
 
-  --color-text-main: #241d17;       /* Контраст на білому фоні 16.6:1 (WCAG AAA) */
-  --color-text-muted: #5e544c;      /* Контраст на білому фоні 7.4:1 (WCAG AA) */
-  --color-text-date: #675c54;       /* Контраст на білому фоні 6.5:1 (WCAG AA) */
-  
+  --color-text-main: #241d17; /* Контраст на білому фоні 16.6:1 (WCAG AAA) */
+  --color-text-muted: #5e544c; /* Контраст на білому фоні 7.4:1 (WCAG AA) */
+  --color-text-date: #675c54; /* Контраст на білому фоні 6.5:1 (WCAG AA) */
+
   --color-border: #e2d6c7;
   --color-border-subtle: #eee6db;
   --color-border-focus: #9c4314;
 
   /* Позначки категорій: індивідуальні кольори з контрастом WCAG AA ≥ 4.5:1 */
   --badge-electronics-bg: #e3edfc;
-  --badge-electronics-text: #124da0;   /* Контраст 6.85:1 */
+  --badge-electronics-text: #124da0; /* Контраст 6.85:1 */
   --badge-electronics-border: #bdd3f8;
 
   --badge-services-bg: #dcfce7;
-  --badge-services-text: #115e34;      /* Контраст 7.15:1 */
+  --badge-services-text: #115e34; /* Контраст 7.15:1 */
   --badge-services-border: #a7f3d0;
 
   --badge-other-bg: #fef3c7;
-  --badge-other-text: #78350f;         /* Контраст 8.15:1 */
+  --badge-other-text: #78350f; /* Контраст 8.15:1 */
   --badge-other-border: #fde68a;
 
   /* Тіні для затишного відчуття «дружньої спільноти» */
   --shadow-sm: 0 1px 3px rgba(40, 28, 18, 0.05);
-  --shadow-card: 0 2px 8px rgba(40, 28, 18, 0.05), 0 1px 2px rgba(40, 28, 18, 0.03);
-  --shadow-card-hover: 0 8px 20px rgba(40, 28, 18, 0.08), 0 3px 6px rgba(40, 28, 18, 0.04);
+  --shadow-card:
+    0 2px 8px rgba(40, 28, 18, 0.05), 0 1px 2px rgba(40, 28, 18, 0.03);
+  --shadow-card-hover:
+    0 8px 20px rgba(40, 28, 18, 0.08), 0 3px 6px rgba(40, 28, 18, 0.04);
 
   /* Геометрія: м'які округлення для приязного образу */
   --radius-sm: 6px;
@@ -58,7 +59,9 @@
   --radius-full: 9999px;
 
   /* Типографічна гарнітура */
-  --font-family-base: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-base:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -92,7 +95,11 @@ body {
 
 /* Шапка сайту */
 header.site-header {
-  background: linear-gradient(180deg, var(--color-bg-header) 0%, var(--color-bg-header-bottom) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-header) 0%,
+    var(--color-bg-header-bottom) 100%
+  );
   border-bottom: 1px solid var(--color-border);
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
@@ -155,7 +162,9 @@ header.site-header {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   background-color: rgba(84, 67, 54, 0.06);
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .nav-categories a:hover {
@@ -180,7 +189,10 @@ header.site-header {
   padding: 10px 18px;
   font-size: 0.9375rem;
   box-shadow: 0 2px 4px rgba(156, 67, 20, 0.25);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .nav-btn-add:hover,
@@ -197,7 +209,9 @@ header.site-header {
   padding: 9px 16px;
   font-size: 0.9375rem;
   box-shadow: 0 2px 4px rgba(156, 67, 20, 0.2);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Основний контент сторінки */
@@ -270,7 +284,9 @@ footer p {
   outline: none;
   cursor: pointer;
   width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 #filter select:focus {
@@ -317,7 +333,10 @@ footer p {
   flex-direction: column;
   gap: 14px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .card:hover {
@@ -640,8 +659,6 @@ footer {
   }
 }
 
-/* 6. Практична робота №8: кнопки дій, форма додавання та валідація */
-
 /* Токени для станів помилки та успіху (контраст на білому фоні 6.5:1 та 7.2:1) */
 :root {
   --color-error: #b3261e;
@@ -736,7 +753,9 @@ button.btn-action:focus-visible,
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .form-field textarea {
@@ -822,4 +841,103 @@ button.btn-action:focus-visible,
   .ad-form {
     padding: 24px;
   }
+}
+
+/* Атрибут hidden повинен перемагати будь-який display, заданий у стилях класів */
+[hidden] {
+  display: none !important;
+}
+
+/* Група кнопок у заголовку секції оголошень */
+.ads-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Індикатор завантаження з анімованим спінером */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding: 14px 18px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.spinner {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Користувачам із вимкненою анімацією спінер показується статично */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+/* Повідомлення про помилку завантаження (мережевий збій, коди 4xx/5xx, тайм-аут) */
+.error-message {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding: 14px 18px;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+}
+
+.error-message p {
+  margin: 0;
+}
+
+.error-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-error);
+}
+
+.error-details {
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--color-text-main);
+}
+
+/* Кнопки «Оновити» вимкнені на час виконання запиту */
+button.btn-action:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Порожній результат фільтрації */
+.empty-state {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-card);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
 }
