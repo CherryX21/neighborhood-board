@@ -1,4 +1,5 @@
 /**
+ * Практична робота №9: Клієнт для відомого API (fetch/AJAX)
  * Студент: Мінаєв Артем Ігорович, група ІП-53
  * Варіант №18: Дошка сусідських оголошень (neighborhood-board)
  *
@@ -80,7 +81,7 @@ const formStatus = document.querySelector("#form-status");
 // Кнопки, що показують і приховують форму (у шапці та в блоці оголошень)
 const toggleButtons = document.querySelectorAll("[data-toggle-form]");
 
-// Елементи станів завантаження та помилки
+// Елементи станів завантаження та помилки (практична робота №9)
 const loadingIndicator = document.querySelector("#loading-indicator");
 const errorMessage = document.querySelector("#error-message");
 const errorDetails = document.querySelector("#error-details");
@@ -598,6 +599,8 @@ async function fetchJson(url, timeoutMs) {
     try {
       response = await fetch(url, {
         signal: controller.signal,
+        // Кнопка «Оновити» не повинна віддавати застарілу відповідь із HTTP-кешу браузера
+        cache: "no-store",
         headers: { Accept: "application/json" }
       });
     } catch {

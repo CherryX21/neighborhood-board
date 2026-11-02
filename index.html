@@ -6,6 +6,9 @@
 
     <title>Дошка сусідських оголошень</title>
 
+    <!-- Порожня іконка: браузер не надсилає зайвий запит /favicon.ico (404 у консолі) -->
+    <link rel="icon" href="data:," />
+
     <!-- Google Fonts: Plus Jakarta Sans для сучасної та дружньої типографіки -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -91,14 +94,26 @@
         </div>
 
         <!-- Повідомлення про результат додавання (озвучується скрінрідерами) -->
-        <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        <p
+          id="form-status"
+          class="form-status"
+          role="status"
+          aria-live="polite"
+        ></p>
 
         <!-- Форма додавання оголошення: за замовчуванням прихована, показується класом .visible -->
-        <form id="add-ad-form" class="ad-form" aria-labelledby="add-ad-form-title">
+        <form
+          id="add-ad-form"
+          class="ad-form"
+          aria-labelledby="add-ad-form-title"
+        >
           <h3 id="add-ad-form-title">Нове оголошення</h3>
 
           <div class="form-field">
-            <label for="ad-title">Назва оголошення <span class="required-mark" aria-hidden="true">*</span></label>
+            <label for="ad-title"
+              >Назва оголошення
+              <span class="required-mark" aria-hidden="true">*</span></label
+            >
             <input
               type="text"
               id="ad-title"
@@ -112,8 +127,16 @@
           </div>
 
           <div class="form-field">
-            <label for="ad-category">Категорія <span class="required-mark" aria-hidden="true">*</span></label>
-            <select id="ad-category" name="category" required aria-describedby="ad-category-error">
+            <label for="ad-category"
+              >Категорія
+              <span class="required-mark" aria-hidden="true">*</span></label
+            >
+            <select
+              id="ad-category"
+              name="category"
+              required
+              aria-describedby="ad-category-error"
+            >
               <option value="">Оберіть категорію</option>
               <option value="electronics">Електроніка</option>
               <option value="services">Послуги</option>
@@ -134,7 +157,9 @@
               placeholder="0"
               aria-describedby="ad-price-hint ad-price-error"
             />
-            <p id="ad-price-hint" class="field-hint">Необов'язково. Порожнє поле або 0 означає «безкоштовно».</p>
+            <p id="ad-price-hint" class="field-hint">
+              Необов'язково. Порожнє поле або 0 означає «безкоштовно».
+            </p>
             <p id="ad-price-error" class="field-error"></p>
           </div>
 
@@ -147,7 +172,9 @@
               maxlength="200"
               aria-describedby="ad-description-counter"
             ></textarea>
-            <p id="ad-description-counter" class="char-counter">Залишилось символів: 200</p>
+            <p id="ad-description-counter" class="char-counter">
+              Залишилось символів: 200
+            </p>
           </div>
 
           <div class="form-actions">
@@ -156,7 +183,12 @@
         </form>
 
         <!-- Стан завантаження: показується до отримання відповіді від API -->
-        <p id="loading-indicator" class="loading-indicator" role="status" hidden>
+        <p
+          id="loading-indicator"
+          class="loading-indicator"
+          role="status"
+          hidden
+        >
           <span class="spinner" aria-hidden="true"></span>
           Завантаження оголошень…
         </p>
@@ -164,7 +196,9 @@
         <!-- Помилка завантаження: role="alert" озвучується скрінрідерами -->
         <div id="error-message" class="error-message" role="alert" hidden>
           <div class="error-text">
-            <p class="error-title">Оголошення тимчасово недоступні. Спробуйте пізніше.</p>
+            <p class="error-title">
+              Оголошення тимчасово недоступні. Спробуйте пізніше.
+            </p>
             <p id="error-details" class="error-details"></p>
           </div>
           <button type="button" id="retry-button" class="btn-action">
@@ -183,10 +217,15 @@
             <div class="card-content">
               <div class="card-meta">
                 <span class="badge badge-electronics">Електроніка</span>
-                <time class="card-date" datetime="2026-10-05T10:20">Сьогодні, 10:20</time>
+                <time class="card-date" datetime="2026-10-05T10:20"
+                  >Сьогодні, 10:20</time
+                >
               </div>
               <h3>Продам монітор</h3>
-              <p>24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель HDMI у комплекті.</p>
+              <p>
+                24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель
+                HDMI у комплекті.
+              </p>
               <p class="card-price">Ціна: 3500 грн.</p>
             </div>
           </article>
@@ -200,8 +239,14 @@
       <p>Тут відображається детальна інформація про обране оголошення.</p>
       <div class="aside-details">
         <p><strong>Оголошення:</strong> Продам монітор</p>
-        <p><strong>Категорія:</strong> <span class="badge badge-electronics">Електроніка</span></p>
-        <p><strong>Опубліковано:</strong> <time class="card-date">Сьогодні, 10:20</time></p>
+        <p>
+          <strong>Категорія:</strong>
+          <span class="badge badge-electronics">Електроніка</span>
+        </p>
+        <p>
+          <strong>Опубліковано:</strong>
+          <time class="card-date">Сьогодні, 10:20</time>
+        </p>
         <p><strong>Контакт:</strong> +380 (99) 123-45-67</p>
         <p><strong>Локація:</strong> Корпус ФІОТ / Політехнічна</p>
       </div>
