@@ -18,6 +18,11 @@
     />
 
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Практична робота №10: Vue 3 (глобальна збірка, без Node.js і Vite) -->
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js" defer></script>
+    <!-- app.js має виконатися раніше за script.js: він створює реактивний стан -->
+    <script src="js/app.js" defer></script>
     <script src="js/script.js" defer></script>
   </head>
   <body>
@@ -207,7 +212,7 @@
         </div>
 
         <div class="cards" id="listings-list">
-          <!-- Статичний шаблон оголошення (замінюється динамічним списком) -->
+          <!-- Статична заглушка на випадок, якщо Vue не завантажився; після mount() її замінює компонент AdCard -->
           <article class="card card-placeholder" id="placeholder-ad">
             <img
               src="assets/img/monitor.svg"

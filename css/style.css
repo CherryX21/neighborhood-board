@@ -946,3 +946,31 @@ button.btn-action:disabled {
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-sm);
 }
+
+/* 8. Практична робота №10: кнопка розгортання опису в компоненті AdCard */
+.card-content .btn-details {
+  align-self: flex-start;
+  margin: 4px 0 6px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.card-content .btn-details:hover {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+}
+
+.card-content .btn-details:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}

@@ -6,6 +6,9 @@
  * Джерело даних: JSONPlaceholder, https://jsonplaceholder.typicode.com/posts?userId=3
  * (публічне API без ключа). Поле title трактується як заголовок оголошення,
  * поле body — як його текст.
+ *
+ * Практична робота №10: список карток рендерить Vue-компонент AdCard (js/app.js).
+ * Цей файл змінює лише реактивний стан boardVm і не створює DOM-вузли карток.
  */
 
 console.log("Скрипт js/script.js успішно підключено");
@@ -31,14 +34,10 @@ const REQUEST_TIMEOUT_MS = 8000;
 // Категорії, між якими розподіляються записи API (у відповіді категорії немає)
 const API_CATEGORIES = ["electronics", "services", "other"];
 
-// Оголошення, отримані з API. Замінюються повністю при кожному успішному запиті
-let remoteAds = [];
-
-// Оголошення, додані користувачем через форму. Не втрачаються при оновленні з API
-const localAds = [];
-
-// Чи був хоча б один успішний запит (до цього порожній список не є «порожнім результатом»)
-let hasLoadedOnce = false;
+// Реактивний стан дошки (remoteAds, localAds, currentCategory, hasLoadedOnce)
+// живе в кореневому екземплярі Vue з js/app.js. Оголошення з API замінюються
+// повністю при кожному успішному запиті, оголошення з форми не втрачаються.
+const { vm: boardVm, categoryNames } = window.BoardApp;
 
 // Ознака виконання запиту: захищає від паралельних запитів
 let isLoading = false;
@@ -48,22 +47,8 @@ let isLoading = false;
  * @returns {Array}
  */
 function getAllAds() {
-  return [...localAds, ...remoteAds];
+  return boardVm.allAds;
 }
-
-// Словник назв категорій для відображення у бейджах
-const categoryNames = {
-  electronics: "Електроніка",
-  services: "Послуги",
-  other: "Інше"
-};
-
-// Відповідність категорій векторним іконкам
-const categoryIcons = {
-  electronics: "assets/img/monitor.svg",
-  services: "assets/img/repair.svg",
-  other: "assets/img/books.svg"
-};
 
 // Пошук контейнера для карток та лічильника
 const listContainer = document.querySelector("#listings-list");
@@ -98,136 +83,13 @@ const requiredMessages = {
   "ad-category": "Оберіть категорію зі списку"
 };
 
-// Поточна категорія фільтра: значення "all" означає відсутність фільтрації
-let currentCategory = "all";
-
-// Видалення статичного шаблону картки перед формуванням списку
-if (listContainer) {
-  const staticPlaceholder = listContainer.querySelector(".card");
-  if (staticPlaceholder) {
-    staticPlaceholder.remove();
-  }
-}
-
-/**
- * Повертає копію масиву, впорядковану від найсвіжіших оголошень до старіших.
- * При однаковому віку новіше оголошення (з більшим id) розташовується вище.
- * @param {Array} listings - масив оголошень
- * @returns {Array}
+/*
+ * Практична робота №10: функції ручного рендеру з практикуму №7
+ * (sortByFreshness, getVisibleAds, renderListings) видалені: фільтрацію,
+ * сортування і побудову карток тепер виконують computed-властивості
+ * кореневого застосунку та компонент AdCard (js/app.js). Vue сам перемальовує
+ * список, коли змінюються remoteAds, localAds або currentCategory.
  */
-function sortByFreshness(listings) {
-  return [...listings].sort((a, b) => a.daysAgo - b.daysAgo || b.id - a.id);
-}
-
-/**
- * Повертає оголошення, що відповідають поточному фільтру категорії
- * @returns {Array}
- */
-function getVisibleAds() {
-  const allAds = getAllAds();
-  const filtered =
-    currentCategory === "all"
-      ? allAds
-      : allAds.filter((ad) => ad.category === currentCategory);
-  return sortByFreshness(filtered);
-}
-
-/**
- * Динамічна генерація та вставка карток оголошень у DOM
- * @param {Array} listings - масив оголошень
- */
-function renderListings(listings) {
-  if (!listContainer) return;
-
-  // Очищення контейнера перед рендерингом
-  listContainer.innerHTML = "";
-
-  // Порожній результат показуємо лише після першого успішного завантаження
-  if (listings.length === 0 && hasLoadedOnce) {
-    const empty = document.createElement("p");
-    empty.className = "empty-state";
-    empty.textContent = "Оголошень за вибраною категорією немає.";
-    listContainer.append(empty);
-    return;
-  }
-
-  listings.forEach((ad) => {
-    // Створення картки
-    const card = document.createElement("article");
-    card.className = "card";
-
-    // Встановлення data-атрибута з віком оголошення
-    card.dataset.daysAgo = ad.daysAgo;
-
-    // Додавання класу для оголошень старших за 14 днів
-    if (ad.daysAgo > 14) {
-      card.classList.add("outdated");
-    }
-
-    // Зображення картки
-    const img = document.createElement("img");
-    img.src = categoryIcons[ad.category] || "assets/img/books.svg";
-    img.alt = ad.title;
-    img.className = "card-img";
-
-    // Блок із текстовим вмістом
-    const content = document.createElement("div");
-    content.className = "card-content";
-
-    // Мета-дані: бейдж категорії та дата публікації
-    const meta = document.createElement("div");
-    meta.className = "card-meta";
-
-    const badge = document.createElement("span");
-    badge.className = `badge badge-${ad.category}`;
-    badge.textContent = categoryNames[ad.category] || ad.category;
-
-    const date = document.createElement("time");
-    date.className = "card-date";
-    if (ad.daysAgo === 0) {
-      date.textContent = ad.time ? `Сьогодні, ${ad.time}` : "Сьогодні";
-    } else if (ad.daysAgo === 1) {
-      date.textContent = ad.time ? `Вчора, ${ad.time}` : "Вчора";
-    } else {
-      date.textContent = `${ad.daysAgo} дн. тому`;
-    }
-
-    meta.append(badge, date);
-
-    // Заголовок оголошення
-    const title = document.createElement("h3");
-    title.textContent = ad.title;
-
-    // Категорія оголошення
-    const category = document.createElement("p");
-    category.className = "card-category";
-    category.textContent = `Категорія: ${categoryNames[ad.category] || ad.category}`;
-
-    // Вартість
-    const price = document.createElement("p");
-    price.className = "card-price";
-    if (ad.price === null) {
-      price.textContent = "Ціна: за домовленістю";
-    } else {
-      price.textContent =
-        ad.price === 0 ? "Ціна: безкоштовно" : `Ціна: ${ad.price} грн.`;
-    }
-
-    // Збирання структури картки: опис додається лише якщо він заповнений
-    content.append(meta, title, category);
-    if (ad.description) {
-      const description = document.createElement("p");
-      description.className = "card-description";
-      description.textContent = ad.description;
-      content.append(description);
-    }
-    content.append(price);
-    card.append(img, content);
-
-    // Додавання картки до контейнера
-    listContainer.append(card);
-  });
-}
 
 /**
  * Оновлення лічильника активних оголошень (daysAgo <= 14)
@@ -241,15 +103,14 @@ function updateListingsSummary(listings) {
 }
 
 /**
- * Перемальовує список з урахуванням фільтра та оновлює лічильник.
+ * Оновлює лічильник після зміни стану. Список карток перемальовує Vue.
  * Лічильник завжди рахує всі оголошення, незалежно від фільтра.
  */
 function refreshBoard() {
-  renderListings(getVisibleAds());
   updateListingsSummary(getAllAds());
 }
 
-// Початковий рендеринг: список порожній до відповіді API, лічильник показує 0
+// Початковий стан: список порожній до відповіді API, лічильник показує 0
 refreshBoard();
 
 /**
@@ -440,10 +301,11 @@ if (addForm) {
       time: getCurrentTime()
     };
 
-    localAds.push(newAd);
+    // Зміна реактивного масиву: Vue сам додасть картку до списку
+    boardVm.localAds.push(newAd);
 
     // Скидання фільтра, щоб нове оголошення гарантовано з'явилося у списку
-    currentCategory = "all";
+    boardVm.currentCategory = "all";
     if (filterSelect) {
       filterSelect.value = "all";
     }
@@ -473,7 +335,7 @@ if (addForm) {
 if (filterForm) {
   filterForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    currentCategory = filterSelect.value;
+    boardVm.currentCategory = filterSelect.value;
     refreshBoard();
   });
 }
@@ -546,7 +408,10 @@ function printBoardStatistics(adsList) {
  * Виводить у консоль аналітику по поточному вмісту дошки.
  * Викликається після кожного успішного завантаження даних з API.
  */
-function logBoardAnalytics() {
+async function logBoardAnalytics() {
+  // Vue оновлює DOM асинхронно: чекаємо завершення рендеру перед підрахунком вузлів
+  await Vue.nextTick();
+
   if (listContainer) {
     const renderedCards = listContainer.querySelectorAll(".card");
     const outdatedCards = listContainer.querySelectorAll(".card.outdated");
@@ -749,10 +614,10 @@ async function loadData() {
     }
 
     // Адаптація полів відповіді API до структури оголошень дошки
-    remoteAds = posts.filter(isValidPost).map(mapPostToAd);
-    hasLoadedOnce = true;
+    boardVm.remoteAds = posts.filter(isValidPost).map(mapPostToAd);
+    boardVm.hasLoadedOnce = true;
 
-    // Повторне використання функції рендеру списку з практикуму №7
+    // Список карток оновлюється автоматично через реактивний стан
     refreshBoard();
     logBoardAnalytics();
   } catch (error) {
