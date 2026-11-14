@@ -26,7 +26,6 @@
 
   // Параметри бази IndexedDB
   const DB_NAME = "NeighborhoodBoardDB";
-  const DB_VERSION = 1;
   const STORE_NAME = "posts";
 
   // Поточний режим сховища: "indexeddb" або "localstorage" (резервний)
@@ -72,20 +71,22 @@
   let dbPromise = null;
 
   /**
-   * Відкриває базу даних. Об'єктне сховище створюється лише в onupgradeneeded,
-   * який браузер викликає, коли бази ще немає або її версія нижча за DB_VERSION.
+   * Одне відкриття бази. Без параметра version браузер відкриває наявну базу
+   * як є, а нової бази ще немає - створює її з версією 1 (тоді й спрацьовує
+   * onupgradeneeded, де створюється об'єктне сховище).
+   * @param {number} [version] - версія для явного оновлення схеми
    * @returns {Promise<IDBDatabase>}
    */
-  function openDB() {
-    if (dbPromise) return dbPromise;
-
-    dbPromise = new Promise((resolve, reject) => {
+  function openWithVersion(version) {
+    return new Promise((resolve, reject) => {
       if (typeof indexedDB === "undefined") {
         reject(new Error("IndexedDB недоступна в цьому браузері"));
         return;
       }
 
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      const request = version
+        ? indexedDB.open(DB_NAME, version)
+        : indexedDB.open(DB_NAME);
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
@@ -110,6 +111,24 @@
       // Інша вкладка тримає стару версію бази відкритою
       request.onblocked = () =>
         reject(new Error("Відкриття бази заблоковане іншою вкладкою"));
+    });
+  }
+
+  /**
+   * Відкриває базу даних і гарантує наявність сховища posts. Якщо база вже
+   * існує, але сховища в ній немає (наприклад, після невдалого видалення бази
+   * з DevTools), версія піднімається на одиницю, і onupgradeneeded створює його.
+   * @returns {Promise<IDBDatabase>}
+   */
+  function openDB() {
+    if (dbPromise) return dbPromise;
+
+    dbPromise = openWithVersion().then((db) => {
+      if (db.objectStoreNames.contains(STORE_NAME)) return db;
+
+      const nextVersion = db.version + 1;
+      db.close();
+      return openWithVersion(nextVersion);
     });
 
     // Невдале відкриття не кешується: наступна спроба почне все спочатку
@@ -301,7 +320,9 @@
   async function add(record) {
     if (mode === "indexeddb") return addItem(record);
 
-    const items = loadFromLocalStorage().filter((item) => item.id !== record.id);
+    const items = loadFromLocalStorage().filter(
+      (item) => item.id !== record.id
+    );
     items.push(record);
     saveToLocalStorage(items);
   }
@@ -324,7 +345,9 @@
     if (ids.length === 0) return;
     if (mode === "indexeddb") return deleteItems(ids);
 
-    const items = loadFromLocalStorage().filter((item) => !ids.includes(item.id));
+    const items = loadFromLocalStorage().filter(
+      (item) => !ids.includes(item.id)
+    );
     saveToLocalStorage(items);
   }
 
