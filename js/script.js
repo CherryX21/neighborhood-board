@@ -9,6 +9,11 @@
  *
  * Практична робота №10: список карток рендерить Vue-компонент AdCard (js/app.js).
  * Цей файл змінює лише реактивний стан boardVm і не створює DOM-вузли карток.
+ *
+ * Практична робота №11: оголошення, додані через форму, зберігаються між
+ * перезавантаженнями в IndexedDB (шар збереження - js/storage.js). Під час
+ * запуску вони читаються зі сховища, а після додавання чи видалення сховище
+ * оновлюється разом зі станом Vue.
  */
 
 console.log("Скрипт js/script.js успішно підключено");
@@ -24,6 +29,13 @@ const COUNTER_WARNING_THRESHOLD = 20;
 
 // Мінімальна кількість значущих символів у назві оголошення
 const TITLE_MIN_LENGTH = 3;
+
+// Початок діапазону id для оголошень користувача. Записи API мають id 1-100,
+// тому власні id не можуть збігтися з ними і порушити унікальність :key
+const LOCAL_ID_START = 1000;
+
+// Оголошення старше цієї кількості днів вважається застарілим
+const OUTDATED_AFTER_DAYS = 14;
 
 // Адреса публічного API (без ключа). Запит повертає 10 записів користувача №3
 const API_URL = "https://jsonplaceholder.typicode.com/posts?userId=3";
@@ -62,6 +74,10 @@ const priceInput = document.querySelector("#ad-price");
 const descriptionInput = document.querySelector("#ad-description");
 const descriptionCounter = document.querySelector("#ad-description-counter");
 const formStatus = document.querySelector("#form-status");
+
+// Попередження про проблеми зі сховищем та кнопка видалення застарілих (практична робота №11)
+const storageWarning = document.querySelector("#storage-warning");
+const cleanupButton = document.querySelector("#cleanup-button");
 
 // Кнопки, що показують і приховують форму (у шапці та в блоці оголошень)
 const toggleButtons = document.querySelectorAll("[data-toggle-form]");
@@ -215,22 +231,38 @@ function updateDescriptionCounter() {
 }
 
 /**
- * Повертає нове значення id на основі максимального наявного
+ * Повертає id для нового оголошення користувача: максимальний серед власних
+ * оголошень плюс один, але не менше LOCAL_ID_START
  * @returns {number}
  */
 function getNextId() {
-  return Math.max(0, ...getAllAds().map((ad) => ad.id)) + 1;
+  return Math.max(LOCAL_ID_START, ...boardVm.localAds.map((ad) => ad.id)) + 1;
 }
 
 /**
- * Повертає поточний час у форматі ГГ:ХХ
+ * Форматує час у вигляді ГГ:ХХ
+ * @param {Date} date - момент часу
  * @returns {string}
  */
-function getCurrentTime() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
+function formatTime(date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
+}
+
+/**
+ * Рахує, скільки календарних днів минуло від дати публікації до сьогодні.
+ * Порівнюються початки діб, тому оголошення, опубліковане вчора ввечері,
+ * уранці вже має daysAgo = 1. Math.round компенсує перехід на літній час,
+ * коли доба триває 23 або 25 годин.
+ * @param {Date} date - дата публікації
+ * @param {Date} [now] - поточний момент (для перевірки в консолі)
+ * @returns {number}
+ */
+function calcDaysAgo(date, now = new Date()) {
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.max(0, Math.round((startOfDay(now) - startOfDay(date)) / msPerDay));
 }
 
 // Друга подія варіанта: клік по кнопках «Додати оголошення» показує або приховує форму
@@ -290,7 +322,9 @@ if (addForm) {
       return;
     }
 
-    // Формування нового об'єкта тієї ж структури, що й оголошення, отримані з API
+    // Формування нового об'єкта тієї ж структури, що й оголошення, отримані з API.
+    // date зберігається в сховищі, а daysAgo і time обчислюються з неї під час читання
+    const createdAt = new Date();
     const newAd = {
       id: getNextId(),
       title: titleInput.value.trim(),
@@ -298,11 +332,16 @@ if (addForm) {
       price: priceInput.value === "" ? 0 : Number(priceInput.value),
       description: descriptionInput.value.trim(),
       daysAgo: 0,
-      time: getCurrentTime()
+      time: formatTime(createdAt),
+      date: createdAt.toISOString(),
+      local: true
     };
 
     // Зміна реактивного масиву: Vue сам додасть картку до списку
     boardVm.localAds.push(newAd);
+
+    // Запис у IndexedDB виконується асинхронно, інтерфейс його не чекає
+    persistNewAd(newAd);
 
     // Скидання фільтра, щоб нове оголошення гарантовано з'явилося у списку
     boardVm.currentCategory = "all";
@@ -636,5 +675,192 @@ async function loadData() {
   if (button) button.addEventListener("click", loadData);
 });
 
-// Перший запит до API під час завантаження сторінки
-loadData();
+/* ==========================================================================
+   Практична робота №11: збереження оголошень користувача (IndexedDB)
+   ========================================================================== */
+
+/**
+ * Показує попередження про проблему зі сховищем
+ * @param {string} message - текст попередження
+ */
+function showStorageWarning(message) {
+  if (!storageWarning) return;
+  storageWarning.textContent = message;
+  storageWarning.hidden = false;
+}
+
+/**
+ * Перетворює оголошення на запис для сховища. Створюється звичайний об'єкт
+ * лише з потрібними полями: реактивні Proxy-об'єкти Vue IndexedDB клонувати
+ * не вміє (DataCloneError), а daysAgo, time і local не зберігаються.
+ * @param {Object} ad - оголошення зі стану Vue
+ * @returns {Object} запис для сховища "posts"
+ */
+function adToRecord(ad) {
+  return {
+    id: ad.id,
+    title: ad.title,
+    category: ad.category,
+    price: ad.price,
+    description: ad.description,
+    date: ad.date
+  };
+}
+
+/**
+ * Перевіряє, що запис зі сховища можна показати як оголошення
+ * @param {any} record - запис зі сховища
+ * @returns {boolean}
+ */
+function isValidSavedRecord(record) {
+  return (
+    record !== null &&
+    typeof record === "object" &&
+    Number.isInteger(record.id) &&
+    typeof record.title === "string" &&
+    record.title.trim() !== "" &&
+    Object.hasOwn(categoryNames, record.category) &&
+    !Number.isNaN(Date.parse(record.date))
+  );
+}
+
+/**
+ * Відновлює оголошення зі сховища: обчислює daysAgo і time з поля date
+ * @param {Object} record - запис зі сховища
+ * @returns {Object} оголошення зі структурою, яку очікує AdCard
+ */
+function recordToAd(record) {
+  const date = new Date(record.date);
+  return {
+    id: record.id,
+    title: record.title,
+    category: record.category,
+    price: typeof record.price === "number" ? record.price : 0,
+    description: typeof record.description === "string" ? record.description : "",
+    date: record.date,
+    daysAgo: calcDaysAgo(date),
+    time: formatTime(date),
+    local: true
+  };
+}
+
+/**
+ * Зберігає нове оголошення. Якщо запис не вдався, оголошення лишається на
+ * екрані, а користувач бачить попередження, що після перезавантаження воно зникне.
+ * @param {Object} ad - щойно додане оголошення
+ */
+async function persistNewAd(ad) {
+  try {
+    await PostStore.add(adToRecord(ad));
+  } catch (error) {
+    console.error("Не вдалося зберегти оголошення:", error);
+    showStorageWarning(
+      "Оголошення додано, але не збережено: після перезавантаження сторінки воно зникне."
+    );
+  }
+}
+
+/**
+ * Читає збережені оголошення зі сховища під час запуску сторінки.
+ * Помилки сховища не блокують решту застосунку: запит до API виконається
+ * в будь-якому разі.
+ */
+async function restoreSavedAds() {
+  try {
+    const { mode, migrated, error } = await PostStore.init();
+
+    if (error) {
+      showStorageWarning(
+        "IndexedDB недоступна (можливо, увімкнено приватний режим). Оголошення зберігаються в localStorage."
+      );
+    }
+
+    const records = await PostStore.getAll();
+    const validRecords = records.filter(isValidSavedRecord);
+    if (validRecords.length !== records.length) {
+      console.warn(
+        `Пропущено пошкоджених записів: ${records.length - validRecords.length}`
+      );
+    }
+
+    boardVm.localAds = validRecords.map(recordToAd);
+    refreshBoard();
+
+    if (migrated > 0) {
+      setStatus(`Перенесено оголошень із localStorage в IndexedDB: ${migrated}.`);
+    }
+    console.log(
+      `Відновлено збережених оголошень: ${validRecords.length} (сховище: ${mode})`
+    );
+  } catch (error) {
+    console.error("Не вдалося прочитати збережені оголошення:", error);
+    showStorageWarning(
+      "Не вдалося прочитати збережені оголошення. Нові оголошення можуть не зберегтися."
+    );
+  }
+}
+
+/**
+ * Видаляє одне оголошення користувача зі стану та зі сховища
+ * @param {number} id - ідентифікатор оголошення
+ */
+async function removeLocalAd(id) {
+  const index = boardVm.localAds.findIndex((ad) => ad.id === id);
+  if (index === -1) return;
+
+  const [removed] = boardVm.localAds.splice(index, 1);
+  refreshBoard();
+  setStatus(`Оголошення «${shorten(removed.title, 40)}» видалено.`);
+
+  try {
+    await PostStore.remove(id);
+  } catch (error) {
+    console.error("Не вдалося видалити оголошення зі сховища:", error);
+    showStorageWarning(
+      "Оголошення прибрано зі списку, але не видалено зі сховища: після перезавантаження воно повернеться."
+    );
+  }
+}
+
+/**
+ * Видаляє всі застарілі (старші за OUTDATED_AFTER_DAYS) оголошення користувача
+ */
+async function removeOutdatedAds() {
+  const outdatedIds = boardVm.localAds
+    .filter((ad) => ad.daysAgo > OUTDATED_AFTER_DAYS)
+    .map((ad) => ad.id);
+
+  if (outdatedIds.length === 0) {
+    setStatus("Застарілих власних оголошень немає.");
+    return;
+  }
+
+  boardVm.localAds = boardVm.localAds.filter(
+    (ad) => !outdatedIds.includes(ad.id)
+  );
+  refreshBoard();
+  setStatus(`Видалено застарілих оголошень: ${outdatedIds.length}.`);
+
+  try {
+    await PostStore.removeMany(outdatedIds);
+  } catch (error) {
+    console.error("Не вдалося видалити оголошення зі сховища:", error);
+    showStorageWarning(
+      "Застарілі оголошення прибрано зі списку, але не видалено зі сховища."
+    );
+  }
+}
+
+// Картка повідомляє про видалення DOM-подією (див. requestRemove в js/app.js)
+if (listContainer) {
+  listContainer.addEventListener("ad-remove", (event) => {
+    removeLocalAd(event.detail.id);
+  });
+}
+
+if (cleanupButton) {
+  cleanupButton.addEventListener("click", removeOutdatedAds);
+}
+
+// Спочатку відновлюються збережені оголошення, потім виконується перший запит до API
+restoreSavedAds().finally(loadData);

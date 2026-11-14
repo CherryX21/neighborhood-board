@@ -11,6 +11,10 @@
  * createElement/innerHTML з практикуму №7 для цієї ділянки видалено.
  * Форма, фільтр і запити до API лишаються в js/script.js і змінюють лише
  * реактивний стан, який повертає app.mount().
+ *
+ * Практична робота №11: оголошення, додані користувачем, можна видалити.
+ * Картка лише повідомляє про намір подією remove, а видалення зі сховища
+ * IndexedDB виконує js/script.js.
  */
 
 // IIFE: константи компонента не потрапляють у глобальну область видимості
@@ -45,8 +49,13 @@
       // null означає «за домовленістю», 0 — «безкоштовно»
       price: { type: Number, default: null },
       daysAgo: { type: Number, default: 0 },
-      time: { type: String, default: "" }
+      time: { type: String, default: "" },
+      // true лише для оголошень, які зберігаються в браузері користувача
+      removable: { type: Boolean, default: false }
     },
+
+    // Подія remove передає id оголошення батьківському компоненту
+    emits: ["remove"],
 
     data() {
       return { expanded: false };
@@ -104,6 +113,15 @@
             <p class="card-description" :id="detailsId" v-show="expanded">{{ description }}</p>
           </template>
           <p class="card-price">{{ priceText }}</p>
+          <button
+            v-if="removable"
+            type="button"
+            class="btn-delete"
+            :aria-label="'Видалити оголошення «' + title + '»'"
+            @click="$emit('remove', adId)"
+          >
+            Видалити
+          </button>
         </div>
       </article>
     `
@@ -147,6 +165,16 @@
         }
       },
 
+      methods: {
+        // Корінь не знає про сховище: він генерує DOM-подію на контейнері,
+        // а js/script.js її обробляє
+        requestRemove(id) {
+          listingsRoot.dispatchEvent(
+            new CustomEvent("ad-remove", { detail: { id } })
+          );
+        }
+      },
+
       template: `
         <p v-if="showEmptyState" class="empty-state">
           Оголошень за вибраною категорією немає.
@@ -161,6 +189,8 @@
           :price="ad.price"
           :days-ago="ad.daysAgo"
           :time="ad.time"
+          :removable="ad.local === true"
+          @remove="requestRemove"
         />
       `
     });

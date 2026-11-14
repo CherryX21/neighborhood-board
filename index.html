@@ -21,8 +21,10 @@
 
     <!-- Практична робота №10: Vue 3 (глобальна збірка, без Node.js і Vite) -->
     <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js" defer></script>
-    <!-- app.js має виконатися раніше за script.js: він створює реактивний стан -->
+    <!-- app.js і storage.js мають виконатися раніше за script.js: вони створюють стан і сховище -->
     <script src="js/app.js" defer></script>
+    <!-- Практична робота №11: шар збереження (localStorage, IndexedDB); створює window.PostStore -->
+    <script src="js/storage.js" defer></script>
     <script src="js/script.js" defer></script>
   </head>
   <body>
@@ -84,6 +86,12 @@
                 Оновити
               </button>
             </p>
+            <!-- Видаляє зі сховища власні оголошення, старші за 14 днів -->
+            <p id="cleanup-ad">
+              <button type="button" id="cleanup-button" class="btn-action">
+                Видалити мої застарілі
+              </button>
+            </p>
             <p id="add-ad">
               <button
                 type="button"
@@ -104,6 +112,14 @@
           class="form-status"
           role="status"
           aria-live="polite"
+        ></p>
+
+        <!-- Попередження про проблеми зі сховищем (IndexedDB недоступна, збій запису) -->
+        <p
+          id="storage-warning"
+          class="storage-warning"
+          role="alert"
+          hidden
         ></p>
 
         <!-- Форма додавання оголошення: за замовчуванням прихована, показується класом .visible -->
