@@ -1077,3 +1077,103 @@ button.btn-action:disabled {
     animation: none;
   }
 }
+
+/* Практична робота №13: SPA, клієнтська маршрутизація */
+
+/* Кнопки-посилання на маршрути мають такий самий фокус, як кнопки */
+a.nav-btn-add:focus-visible,
+a.btn-action:focus-visible,
+.btn-cancel:focus-visible,
+.back-link:focus-visible,
+.card-link:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+/* Контейнер сторінок отримує фокус програмно після переходу; рамка не потрібна */
+#app:focus {
+  outline: none;
+}
+
+/* Посилання поточної категорії в шапці */
+.nav-categories a[aria-current="page"] {
+  color: var(--color-text-main);
+  font-weight: 700;
+  background-color: rgba(156, 67, 20, 0.14);
+  box-shadow: inset 0 -3px 0 var(--color-primary);
+}
+
+/* Назва в картці веде на сторінку оголошення */
+.card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Кнопка «Скасувати» у формі та посилання «назад» */
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-decoration: none;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.btn-cancel:hover {
+  color: var(--color-text-main);
+  background-color: var(--color-bg-subtle);
+}
+
+.back-link {
+  display: inline-block;
+  margin: 0 0 16px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Сторінка окремого оголошення */
+.post-details {
+  max-width: 640px;
+}
+
+.post-message {
+  margin: 0;
+  padding: 16px 18px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.post-message p {
+  margin: 0 0 12px;
+}
+
+.post-message .btn-action {
+  display: inline-block;
+}
+
+#not-found .btn-action {
+  display: inline-block;
+}
+
+.card-id {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+

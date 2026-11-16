@@ -19,6 +19,11 @@
  * компонент AdCard вмикає CSS-анімацію появи і позначку «Нове». Прапорець
  * живе лише в стані Vue: у сховище він не потрапляє (adToRecord), тому після
  * перезавантаження анімації немає.
+ *
+ * Практична робота №13: форма додавання тепер окрема «сторінка» маршруту /new,
+ * а не блок, що ховається й показується. Кнопки «Додати» стали посиланнями
+ * на #/new, фільтр і успішне додавання лише змінюють адресу (location.hash),
+ * а сторінки перемикає js/router.js.
  */
 
 console.log("Скрипт js/script.js успішно підключено");
@@ -84,8 +89,6 @@ const formStatus = document.querySelector("#form-status");
 const storageWarning = document.querySelector("#storage-warning");
 const cleanupButton = document.querySelector("#cleanup-button");
 
-// Кнопки, що показують і приховують форму (у шапці та в блоці оголошень)
-const toggleButtons = document.querySelectorAll("[data-toggle-form]");
 
 // Елементи станів завантаження та помилки (практична робота №9)
 const loadingIndicator = document.querySelector("#loading-indicator");
@@ -133,16 +136,6 @@ function refreshBoard() {
 
 // Початковий стан: список порожній до відповіді API, лічильник показує 0
 refreshBoard();
-
-/**
- * Синхронізує стан кнопок показу форми з її поточною видимістю
- */
-function syncToggleButtons() {
-  const isVisible = addForm.classList.contains("visible");
-  toggleButtons.forEach((button) => {
-    button.setAttribute("aria-expanded", String(isVisible));
-  });
-}
 
 /**
  * Показує або приховує повідомлення про результат додавання
@@ -270,22 +263,6 @@ function calcDaysAgo(date, now = new Date()) {
   return Math.max(0, Math.round((startOfDay(now) - startOfDay(date)) / msPerDay));
 }
 
-// Друга подія варіанта: клік по кнопках «Додати оголошення» показує або приховує форму
-toggleButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!addForm) return;
-
-    addForm.classList.toggle("visible");
-    syncToggleButtons();
-    setStatus("");
-
-    // Після відкриття форми курсор одразу ставиться в перше поле
-    if (addForm.classList.contains("visible")) {
-      titleInput.focus();
-    }
-  });
-});
-
 if (addForm) {
   // Лічильник символів оновлюється на кожну зміну тексту опису
   descriptionInput.addEventListener("input", updateDescriptionCounter);
@@ -365,10 +342,9 @@ if (addForm) {
     });
     updateDescriptionCounter();
 
-    // Приховування форми та повідомлення про успіх
-    addForm.classList.remove("visible");
-    syncToggleButtons();
+    // Повідомлення про успіх; перехід на «/» показує його разом зі стрічкою
     setStatus(`Оголошення «${shorten(newAd.title, 40)}» додано.`);
+    location.hash = "#/";
 
     console.log(
       `Додано оголошення #${newAd.id}. Усього на дошці: ${getAllAds().length}`
@@ -380,8 +356,9 @@ if (addForm) {
 if (filterForm) {
   filterForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    boardVm.currentCategory = filterSelect.value;
-    refreshBoard();
+    // Категорія стає частиною адреси; стан Vue оновлює router.js
+    const category = filterSelect.value;
+    location.hash = category === "all" ? "#/" : `#/category/${category}`;
   });
 }
 
@@ -868,5 +845,11 @@ if (cleanupButton) {
   cleanupButton.addEventListener("click", removeOutdatedAds);
 }
 
-// Спочатку відновлюються збережені оголошення, потім виконується перший запит до API
-restoreSavedAds().finally(loadData);
+// Спочатку відновлюються збережені оголошення, потім виконується перший запит
+// до API. Після обох кроків (за будь-якого результату) дані вважаються готовими:
+// сторінка окремого оголошення до цього моменту показує «Завантаження»
+restoreSavedAds()
+  .then(loadData)
+  .finally(() => {
+    boardVm.dataReady = true;
+  });

@@ -26,36 +26,31 @@
     <!-- Практична робота №11: шар збереження (localStorage, IndexedDB); створює window.PostStore -->
     <script src="js/storage.js" defer></script>
     <script src="js/script.js" defer></script>
+    <!-- Практична робота №13: hash-роутер; виконується останнім, коли script.js уже знайшов усі елементи -->
+    <script src="js/router.js" defer></script>
   </head>
   <body>
     <!-- Шапка сайту -->
     <header class="site-header">
       <div class="header-container">
         <div class="logo-wrapper">
-          <h1 class="logo"><a href="#">Дошка оголошень</a></h1>
+          <h1 class="logo"><a href="#/">Дошка оголошень</a></h1>
           <span class="site-tagline">Спільнота нашого району</span>
         </div>
 
         <nav class="nav-categories" aria-label="Категорії оголошень">
-          <a href="#electronics">Електроніка</a>
-          <a href="#services">Послуги</a>
-          <a href="#other">Інше</a>
+          <a href="#/category/electronics">Електроніка</a>
+          <a href="#/category/services">Послуги</a>
+          <a href="#/category/other">Інше</a>
         </nav>
 
-        <button
-          type="button"
-          class="nav-btn-add"
-          data-toggle-form
-          aria-controls="add-ad-form"
-          aria-expanded="false"
-        >
-          Додати оголошення
-        </button>
+        <a class="nav-btn-add" href="#/new">Додати оголошення</a>
       </div>
     </header>
 
     <!-- Основний контент -->
-    <main>
+    <!-- Контейнер SPA: router.js вставляє сюди секції-«сторінки» за адресою (#/, #/category/…, #/posts/…, #/new) -->
+    <main id="app" tabindex="-1">
       <!-- Секція фільтрації -->
       <section id="filter">
         <h2>Фільтр за категорією</h2>
@@ -93,15 +88,7 @@
               </button>
             </p>
             <p id="add-ad">
-              <button
-                type="button"
-                class="btn-action"
-                data-toggle-form
-                aria-controls="add-ad-form"
-                aria-expanded="false"
-              >
-                Додати нове оголошення
-              </button>
+              <a class="btn-action" href="#/new">Додати нове оголошення</a>
             </p>
           </div>
         </div>
@@ -122,10 +109,64 @@
           hidden
         ></p>
 
-        <!-- Форма додавання оголошення: за замовчуванням прихована, показується класом .visible -->
+        <!-- Стан завантаження: показується до отримання відповіді від API -->
+        <p
+          id="loading-indicator"
+          class="loading-indicator"
+          role="status"
+          hidden
+        >
+          <span class="spinner" aria-hidden="true"></span>
+          Завантаження оголошень…
+        </p>
+
+        <!-- Помилка завантаження: role="alert" озвучується скрінрідерами -->
+        <div id="error-message" class="error-message" role="alert" hidden>
+          <div class="error-text">
+            <p class="error-title">
+              Оголошення тимчасово недоступні. Спробуйте пізніше.
+            </p>
+            <p id="error-details" class="error-details"></p>
+          </div>
+          <button type="button" id="retry-button" class="btn-action">
+            Спробувати знову
+          </button>
+        </div>
+
+        <div class="cards" id="listings-list">
+          <!-- Статична заглушка на випадок, якщо Vue не завантажився; після mount() її замінює компонент AdCard -->
+          <article class="card card-placeholder" id="placeholder-ad">
+            <img
+              src="assets/img/monitor.svg"
+              alt="24-дюймовий IPS-монітор"
+              class="card-img"
+            />
+            <div class="card-content">
+              <div class="card-meta">
+                <span class="badge badge-electronics">Електроніка</span>
+                <time class="card-date" datetime="2026-10-05T10:20"
+                  >Сьогодні, 10:20</time
+                >
+              </div>
+              <h3>Продам монітор</h3>
+              <p>
+                24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель
+                HDMI у комплекті.
+              </p>
+              <p class="card-price">Ціна: 3500 грн.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Сторінка #/new: форма нового оголошення -->
+      <section id="new-ad" aria-labelledby="new-ad-heading">
+        <h2 id="new-ad-heading">Додавання оголошення</h2>
+
+        <!-- Форма додавання оголошення: сторінка маршруту #/new, тому завжди видима (.visible) -->
         <form
           id="add-ad-form"
-          class="ad-form"
+          class="ad-form visible"
           aria-labelledby="add-ad-form-title"
         >
           <h3 id="add-ad-form-title">Нове оголошення</h3>
@@ -200,78 +241,25 @@
 
           <div class="form-actions">
             <button type="submit" class="btn-submit">Опублікувати</button>
+            <a href="#/" class="btn-cancel">Скасувати</a>
           </div>
         </form>
+      </section>
 
-        <!-- Стан завантаження: показується до отримання відповіді від API -->
-        <p
-          id="loading-indicator"
-          class="loading-indicator"
-          role="status"
-          hidden
-        >
-          <span class="spinner" aria-hidden="true"></span>
-          Завантаження оголошень…
-        </p>
+      <!-- Сторінка #/posts/:id: сюди router.js монтує картку обраного оголошення -->
+      <section id="post-page" aria-labelledby="post-page-heading">
+        <h2 id="post-page-heading">Оголошення</h2>
+        <a href="#/" class="back-link">← До стрічки оголошень</a>
+        <div id="post-details" class="post-details"></div>
+      </section>
 
-        <!-- Помилка завантаження: role="alert" озвучується скрінрідерами -->
-        <div id="error-message" class="error-message" role="alert" hidden>
-          <div class="error-text">
-            <p class="error-title">
-              Оголошення тимчасово недоступні. Спробуйте пізніше.
-            </p>
-            <p id="error-details" class="error-details"></p>
-          </div>
-          <button type="button" id="retry-button" class="btn-action">
-            Спробувати знову
-          </button>
-        </div>
-
-        <div class="cards" id="listings-list">
-          <!-- Статична заглушка на випадок, якщо Vue не завантажився; після mount() її замінює компонент AdCard -->
-          <article class="card card-placeholder" id="placeholder-ad">
-            <img
-              src="assets/img/monitor.svg"
-              alt="24-дюймовий IPS-монітор"
-              class="card-img"
-            />
-            <div class="card-content">
-              <div class="card-meta">
-                <span class="badge badge-electronics">Електроніка</span>
-                <time class="card-date" datetime="2026-10-05T10:20"
-                  >Сьогодні, 10:20</time
-                >
-              </div>
-              <h3>Продам монітор</h3>
-              <p>
-                24-дюймовий IPS-монітор у хорошому стані. Full HD, 75 Гц, кабель
-                HDMI у комплекті.
-              </p>
-              <p class="card-price">Ціна: 3500 грн.</p>
-            </div>
-          </article>
-        </div>
+      <!-- Сторінка для невідомої адреси -->
+      <section id="not-found" aria-labelledby="not-found-heading">
+        <h2 id="not-found-heading">Сторінку не знайдено</h2>
+        <p id="not-found-text"></p>
+        <p><a href="#/" class="btn-action">На головну</a></p>
       </section>
     </main>
-
-    <!-- Блок деталей обраного оголошення -->
-    <aside aria-labelledby="selected-ad-title">
-      <h2 id="selected-ad-title">Деталі обраного оголошення</h2>
-      <p>Тут відображається детальна інформація про обране оголошення.</p>
-      <div class="aside-details">
-        <p><strong>Оголошення:</strong> Продам монітор</p>
-        <p>
-          <strong>Категорія:</strong>
-          <span class="badge badge-electronics">Електроніка</span>
-        </p>
-        <p>
-          <strong>Опубліковано:</strong>
-          <time class="card-date">Сьогодні, 10:20</time>
-        </p>
-        <p><strong>Контакт:</strong> +380 (99) 123-45-67</p>
-        <p><strong>Локація:</strong> Корпус ФІОТ / Політехнічна</p>
-      </div>
-    </aside>
 
     <!-- Підвал сайту -->
     <footer>

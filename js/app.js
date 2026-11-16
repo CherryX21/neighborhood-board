@@ -21,6 +21,11 @@
  * керує лише CSS (@keyframes у css/style.css); компонент знає тільки, коли
  * прибрати позначку: за подією animationend або за таймером для користувачів
  * із вимкненою анімацією.
+ *
+ * Практична робота №13: AdCard має режим detailed для сторінки «/posts/:id»
+ * (опис завжди розгорнутий, назва без посилання), а заголовок картки в стрічці
+ * веде на цю сторінку. Компонент і стан дошки доступні роутеру (js/router.js)
+ * через window.BoardApp.
  */
 
 // IIFE: константи компонента не потрапляють у глобальну область видимості
@@ -59,7 +64,9 @@
       // true лише для оголошень, які зберігаються в браузері користувача
       removable: { type: Boolean, default: false },
       // true лише для оголошення, щойно доданого в цій сесії (не зберігається)
-      isNew: { type: Boolean, default: false }
+      isNew: { type: Boolean, default: false },
+      // true на сторінці окремого оголошення: опис розгорнуто, назва не є посиланням
+      detailed: { type: Boolean, default: false }
     },
 
     // remove передає id оголошення батьківському компоненту; seen повідомляє,
@@ -111,6 +118,10 @@
       },
       detailsId() {
         return `ad-details-${this.adId}`;
+      },
+      // Адреса сторінки оголошення для hash-маршрутизації (js/router.js)
+      postHref() {
+        return `#/posts/${this.adId}`;
       }
     },
 
@@ -133,10 +144,15 @@
             </span>
             <time class="card-date">{{ dateText }}</time>
           </div>
-          <h3>{{ title }}</h3>
+          <h3 v-if="detailed">{{ title }}</h3>
+          <h3 v-else>
+            <a class="card-link" :href="postHref">{{ title }}</a>
+          </h3>
           <p class="card-category">Категорія: {{ categoryName }}</p>
+          <p v-if="detailed" class="card-id">Оголошення № {{ adId }}</p>
           <template v-if="description">
             <button
+              v-if="!detailed"
               type="button"
               class="btn-details"
               :aria-expanded="String(expanded)"
@@ -145,7 +161,7 @@
             >
               {{ expanded ? "Сховати деталі" : "Показати деталі" }}
             </button>
-            <p class="card-description" :id="detailsId" v-show="expanded">{{ description }}</p>
+            <p class="card-description" :id="detailsId" v-show="detailed || expanded">{{ description }}</p>
           </template>
           <p class="card-price">{{ priceText }}</p>
           <button
@@ -175,7 +191,10 @@
           localAds: [],
           currentCategory: "all",
           // Порожній результат показуємо лише після першого успішного завантаження
-          hasLoadedOnce: false
+          hasLoadedOnce: false,
+          // true, коли завершились і читання зі сховища, і перший запит до API
+          // (за будь-якого результату): сторінка оголошення чекає на цей прапорець
+          dataReady: false
         };
       },
 
@@ -239,6 +258,6 @@
     });
 
     // mount() повертає кореневий екземпляр: через нього js/script.js змінює стан
-    window.BoardApp = { vm: app.mount(listingsRoot), categoryNames };
+    window.BoardApp = { vm: app.mount(listingsRoot), categoryNames, AdCard };
   }
 })();
