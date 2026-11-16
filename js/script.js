@@ -3,9 +3,17 @@
  * Студент: Мінаєв Артем Ігорович, група ІП-53
  * Варіант №18: Дошка сусідських оголошень (neighborhood-board)
  *
- * Джерело даних: JSONPlaceholder, https://jsonplaceholder.typicode.com/posts?userId=3
- * (публічне API без ключа). Поле title трактується як заголовок оголошення,
- * поле body — як його текст.
+ * Джерело даних у практичній роботі №9: JSONPlaceholder,
+ * https://jsonplaceholder.typicode.com/posts?userId=3 (публічне API без ключа).
+ *
+ * Практична робота №14: джерело замінено на власний сервер Node.js
+ * (server/server.js): GET /api/posts. Клієнтський код запиту fetchJson
+ * (async/await, response.ok, try/catch, тайм-аут) лишився тим самим, змінилися
+ * лише адреса та адаптація полів: сервер повертає готові оголошення
+ * {id, title, category, price, description, date}, тому штучний розподіл
+ * категорій і віку записів, потрібний для JSONPlaceholder, більше не потрібен.
+ * Сторінка має відкриватися з цього сервера (http://localhost:3000), бо
+ * адреса запиту відносна.
  *
  * Практична робота №10: список карток рендерить Vue-компонент AdCard (js/app.js).
  * Цей файл змінює лише реактивний стан boardVm і не створює DOM-вузли карток.
@@ -47,13 +55,15 @@ const LOCAL_ID_START = 1000;
 // Оголошення старше цієї кількості днів вважається застарілим
 const OUTDATED_AFTER_DAYS = 14;
 
-// Адреса публічного API (без ключа). Запит повертає 10 записів користувача №3
-const API_URL = "https://jsonplaceholder.typicode.com/posts?userId=3";
+// Адреса власного API на сервері Node.js (server/server.js). Вона відносна,
+// тому сторінку потрібно відкривати з цього сервера, а не з Live Server.
+// Раніше: "https://jsonplaceholder.typicode.com/posts?userId=3" (практична робота №9)
+const API_URL = "/api/posts";
 
 // Максимальний час очікування відповіді сервера, мс
 const REQUEST_TIMEOUT_MS = 8000;
 
-// Категорії, між якими розподіляються записи API (у відповіді категорії немає)
+// Категорії дошки (для підрахунків у консольній аналітиці)
 const API_CATEGORIES = ["electronics", "services", "other"];
 
 // Реактивний стан дошки (remoteAds, localAds, currentCategory, hasLoadedOnce)
@@ -522,33 +532,37 @@ function isValidPost(post) {
     Number.isInteger(post.id) &&
     typeof post.title === "string" &&
     post.title.trim() !== "" &&
-    typeof post.body === "string"
+    Object.hasOwn(categoryNames, post.category) &&
+    typeof post.description === "string" &&
+    (post.price === null || typeof post.price === "number") &&
+    !Number.isNaN(Date.parse(post.date))
   );
 }
 
 /**
- * Перетворює запис JSONPlaceholder на оголошення дошки (та сама структура,
- * що й в оголошень, доданих через форму).
+ * Перетворює запис сервера на оголошення дошки (та сама структура, що й в
+ * оголошень, доданих через форму). Сервер надсилає дату публікації в форматі
+ * ISO 8601, а вік оголошення (daysAgo) і час (time) обчислюються тут, так само
+ * як для оголошень зі сховища IndexedDB.
  *
- * API повертає лише title та body, тому решта полів умовна:
- *   category — розподіляється по колу між трьома категоріями;
- *   price — null: ціна невідома, у картці виводиться «за домовленістю»;
- *   daysAgo — залежить від порядкового номера запису (дати в API немає).
+ * Прапорця local немає: оголошення сервера користувач не видаляє.
  *
- * @param {{id: number, title: string, body: string}} post - запис з API
- * @param {number} index - порядковий номер запису у відповіді
+ * @param {{id: number, title: string, category: string, price: (number|null),
+ *   description: string, date: string}} post - запис з API
  * @returns {Object} оголошення
  */
-function mapPostToAd(post, index) {
-  // Заголовки JSONPlaceholder починаються з малої літери — вирівнюємо вигляд
-  const title = post.title.trim();
+function mapPostToAd(post) {
+  const date = new Date(post.date);
   return {
     id: post.id,
-    title: title.charAt(0).toUpperCase() + title.slice(1),
-    category: API_CATEGORIES[index % API_CATEGORIES.length],
-    price: null,
-    description: post.body.replace(/\s*\n\s*/g, " ").trim(),
-    daysAgo: index * 2
+    title: post.title.trim(),
+    category: post.category,
+    // null: ціна не вказана, у картці виводиться «за домовленістю»
+    price: post.price,
+    description: post.description.trim(),
+    date: post.date,
+    daysAgo: calcDaysAgo(date),
+    time: formatTime(date)
   };
 }
 
@@ -561,7 +575,7 @@ function describeError(error) {
   if (error instanceof LoadError) {
     switch (error.kind) {
       case "network":
-        return "Немає зʼєднання із сервером. Перевірте інтернет.";
+        return "Немає зʼєднання із сервером. Перевірте, що сервер запущено.";
       case "timeout":
         return `Сервер не відповів протягом ${REQUEST_TIMEOUT_MS / 1000} с.`;
       case "http":
@@ -612,9 +626,9 @@ function hideError() {
 }
 
 /**
- * Завантажує оголошення з публічного API JSONPlaceholder та виводить їх на дошку.
+ * Завантажує оголошення з власного сервера Node.js (GET /api/posts) та
+ * виводить їх на дошку.
  *
- * API: https://jsonplaceholder.typicode.com/posts?userId=3 (без ключа).
  * Помилка варіанта №18: за мережевого збою користувач бачить повідомлення
  * «Оголошення тимчасово недоступні» замість порожньої сторінки. Раніше
  * завантажені оголошення за помилки не зникають.
@@ -635,7 +649,7 @@ async function loadData() {
       throw new LoadError("format");
     }
 
-    // Адаптація полів відповіді API до структури оголошень дошки
+    // Перевірка записів і адаптація їхніх полів до структури оголошень дошки
     boardVm.remoteAds = posts.filter(isValidPost).map(mapPostToAd);
     boardVm.hasLoadedOnce = true;
 

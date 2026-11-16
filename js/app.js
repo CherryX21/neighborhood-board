@@ -203,15 +203,18 @@
         allAds() {
           return [...this.localAds, ...this.remoteAds];
         },
-        // Фільтр за категорією і сортування від найсвіжіших до старіших;
-        // при однаковому віку вище розташовується оголошення з більшим id
+        // Фільтр за категорією і сортування від новіших до старіших за точним
+        // моментом публікації (date, ISO 8601). Раніше порівнювався вік у днях, а
+        // за однакового віку вигравав більший id, але id оголошень користувача
+        // (від 1001) завжди більші за id серверних, і вони завжди йшли першими
+        // незалежно від часу. Якщо дати немає (NaN), порівняння падає на id.
         visibleAds() {
           const filtered =
             this.currentCategory === "all"
               ? this.allAds
               : this.allAds.filter((ad) => ad.category === this.currentCategory);
           return [...filtered].sort(
-            (a, b) => a.daysAgo - b.daysAgo || b.id - a.id
+            (a, b) => Date.parse(b.date) - Date.parse(a.date) || b.id - a.id
           );
         },
         showEmptyState() {
