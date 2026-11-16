@@ -15,6 +15,12 @@
  * Практична робота №11: оголошення, додані користувачем, можна видалити.
  * Картка лише повідомляє про намір подією remove, а видалення зі сховища
  * IndexedDB виконує js/script.js.
+ *
+ * Практична робота №12: щойно додане оголошення з'являється з CSS-анімацією
+ * (slide-down + fade-in) і позначкою «Нове», яка плавно згасає. Анімацією
+ * керує лише CSS (@keyframes у css/style.css); компонент знає тільки, коли
+ * прибрати позначку: за подією animationend або за таймером для користувачів
+ * із вимкненою анімацією.
  */
 
 // IIFE: константи компонента не потрапляють у глобальну область видимості
@@ -51,14 +57,32 @@
       daysAgo: { type: Number, default: 0 },
       time: { type: String, default: "" },
       // true лише для оголошень, які зберігаються в браузері користувача
-      removable: { type: Boolean, default: false }
+      removable: { type: Boolean, default: false },
+      // true лише для оголошення, щойно доданого в цій сесії (не зберігається)
+      isNew: { type: Boolean, default: false }
     },
 
-    // Подія remove передає id оголошення батьківському компоненту
-    emits: ["remove"],
+    // remove передає id оголошення батьківському компоненту; seen повідомляє,
+    // що позначка «Нове» згасла і її можна прибрати зі стану
+    emits: ["remove", "seen"],
 
     data() {
       return { expanded: false };
+    },
+
+    mounted() {
+      // Без анімації (prefers-reduced-motion) подія animationend не настане,
+      // тому позначка прибирається таймером; 6000 мс = тривалість new-badge-fade
+      const reducedMotion =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (this.isNew && reducedMotion) {
+        this.seenTimer = setTimeout(() => this.$emit("seen", this.adId), 6000);
+      }
+    },
+
+    beforeUnmount() {
+      clearTimeout(this.seenTimer);
     },
 
     // Похідні значення перераховуються автоматично при зміні props
@@ -91,11 +115,22 @@
     },
 
     template: `
-      <article class="card" :class="{ outdated: isOutdated }" :data-days-ago="daysAgo">
+      <article
+        class="card"
+        :class="{ outdated: isOutdated, 'card-enter': isNew }"
+        :data-days-ago="daysAgo"
+      >
         <img :src="iconSrc" :alt="title" class="card-img" />
         <div class="card-content">
           <div class="card-meta">
-            <span class="badge" :class="'badge-' + category">{{ categoryName }}</span>
+            <span class="card-badges">
+              <span class="badge" :class="'badge-' + category">{{ categoryName }}</span>
+              <span
+                v-if="isNew"
+                class="badge-new"
+                @animationend="$emit('seen', adId)"
+              >Нове</span>
+            </span>
             <time class="card-date">{{ dateText }}</time>
           </div>
           <h3>{{ title }}</h3>
@@ -172,6 +207,12 @@
           listingsRoot.dispatchEvent(
             new CustomEvent("ad-remove", { detail: { id } })
           );
+        },
+
+        // Позначка «Нове» згасла: знімаємо прапорець, і Vue прибирає її з DOM
+        markSeen(id) {
+          const ad = this.localAds.find((item) => item.id === id);
+          if (ad) ad.isNew = false;
         }
       },
 
@@ -190,7 +231,9 @@
           :days-ago="ad.daysAgo"
           :time="ad.time"
           :removable="ad.local === true"
+          :is-new="ad.isNew === true"
           @remove="requestRemove"
+          @seen="markSeen"
         />
       `
     });

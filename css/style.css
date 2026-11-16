@@ -1017,3 +1017,63 @@ button.btn-action:disabled {
   outline: 3px solid var(--color-primary-focus);
   outline-offset: 2px;
 }
+
+/* Практична робота №12: анімація появи нового оголошення і позначка «Нове» */
+
+/* Нова картка з'їжджає зверху й проявляється. Анімуються лише transform і
+   opacity: їх браузер виконує без перерахунку розмітки. Кінцевий кадр не
+   задано, тому картка приходить до власних значень (наприклад, opacity
+   застарілої), а fill-mode backwards не блокує hover-ефект після завершення */
+@keyframes ad-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+.card-enter {
+  animation: ad-slide-in 0.5s ease-out backwards;
+}
+
+/* Бейдж категорії і позначка «Нове» стоять поруч ліворуч, дата - праворуч */
+.card-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Білий текст на акцентному фоні #9c4314: контраст 6.51:1 (WCAG AA) */
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  /* Приблизно 4,5 с позначка видна, потім плавно згасає до 6 с */
+  animation: new-badge-fade 6s ease-in forwards;
+}
+
+@keyframes new-badge-fade {
+  0%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Вимкнена анімація: картка з'являється одразу, позначка видна статично
+   і прибирається таймером у компоненті AdCard */
+@media (prefers-reduced-motion: reduce) {
+  .card-enter,
+  .badge-new {
+    animation: none;
+  }
+}
