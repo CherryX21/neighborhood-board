@@ -114,7 +114,9 @@
       },
       priceText() {
         if (this.price === null) return "Ціна: за домовленістю";
-        return this.price === 0 ? "Ціна: безкоштовно" : `Ціна: ${this.price} грн.`;
+        return this.price === 0
+          ? "Ціна: безкоштовно"
+          : `Ціна: ${this.price} грн.`;
       },
       detailsId() {
         return `ad-details-${this.adId}`;
@@ -212,7 +214,9 @@
           const filtered =
             this.currentCategory === "all"
               ? this.allAds
-              : this.allAds.filter((ad) => ad.category === this.currentCategory);
+              : this.allAds.filter(
+                  (ad) => ad.category === this.currentCategory
+                );
           return [...filtered].sort(
             (a, b) => Date.parse(b.date) - Date.parse(a.date) || b.id - a.id
           );

@@ -13,6 +13,9 @@
  *   GET  /api/posts/:id   - одне оголошення (200) або 404;
  *   POST /api/posts       - нове оголошення з JSON-тіла (201) або 400/413.
  *
+ * Практична робота №15: усі відповіді отримують заголовки безпеки (CSP,
+ * nosniff, захист від вбудовування у фрейми, Referrer-Policy).
+ *
  * Оголошення зберігаються в пам'яті процесу: початковий список читається з
  * server/data/posts.json, а додані через POST зникають після перезапуску.
  */
@@ -92,7 +95,11 @@ let nextId = Math.max(0, ...posts.map((post) => post.id)) + 1;
  */
 function validateNewPost(body) {
   if (body === null || typeof body !== "object" || Array.isArray(body)) {
-    return { errors: ["Тіло запиту має бути JSON-об'єктом (Content-Type: application/json)"] };
+    return {
+      errors: [
+        "Тіло запиту має бути JSON-об'єктом (Content-Type: application/json)"
+      ]
+    };
   }
 
   const errors = [];
@@ -101,7 +108,9 @@ function validateNewPost(body) {
   if (title === "") {
     errors.push("Поле title обов'язкове й має бути непорожнім рядком");
   } else if (title.length > MAX_TITLE_LENGTH) {
-    errors.push(`Поле title не може бути довшим за ${MAX_TITLE_LENGTH} символів`);
+    errors.push(
+      `Поле title не може бути довшим за ${MAX_TITLE_LENGTH} символів`
+    );
   }
 
   if (!CATEGORIES.includes(body.category)) {
@@ -111,7 +120,11 @@ function validateNewPost(body) {
   // Ціна необов'язкова: null означає «за домовленістю», 0 - «безкоштовно»
   let price = null;
   if (body.price !== undefined && body.price !== null) {
-    if (!Number.isInteger(body.price) || body.price < 0 || body.price > MAX_PRICE) {
+    if (
+      !Number.isInteger(body.price) ||
+      body.price < 0 ||
+      body.price > MAX_PRICE
+    ) {
       errors.push("Поле price має бути цілим невід'ємним числом");
     } else {
       price = body.price;
@@ -123,14 +136,19 @@ function validateNewPost(body) {
     if (typeof body.description !== "string") {
       errors.push("Поле description має бути рядком");
     } else if (body.description.trim().length > MAX_DESCRIPTION_LENGTH) {
-      errors.push(`Поле description не може бути довшим за ${MAX_DESCRIPTION_LENGTH} символів`);
+      errors.push(
+        `Поле description не може бути довшим за ${MAX_DESCRIPTION_LENGTH} символів`
+      );
     } else {
       description = body.description.trim();
     }
   }
 
   if (errors.length > 0) return { errors };
-  return { errors, value: { title, category: body.category, price, description } };
+  return {
+    errors,
+    value: { title, category: body.category, price, description }
+  };
 }
 
 /* ==========================================================================
@@ -142,11 +160,54 @@ const app = express();
 // Не повідомляємо зайве про технологію сервера
 app.disable("x-powered-by");
 
+/* ---------- Заголовки безпеки (практична робота №15) ---------- */
+
+// Content-Security-Policy (CSP) - друга лінія захисту від XSS. Навіть якщо
+// розмітка користувача колись потрапить у DOM (наприклад, через помилково
+// доданий v-html), браузер не виконає inline-обробник onerror чи тег <script>,
+// бо скрипти дозволено лише з власного origin.
+//   script-src 'unsafe-eval': Vue у глобальній збірці компілює рядкові шаблони
+//     компонентів під час виконання через new Function. Без цього дозволу застосунок
+//     не відобразиться; позбутися його можна лише попередньою компіляцією шаблонів.
+//   style-src і font-src: лише власні стилі та Google Fonts (шрифт сторінки).
+//   img-src data: потрібен для порожньої іконки <link rel="icon" href="data:,">.
+//   connect-src 'self': fetch дозволено лише до цього сервера.
+//   object-src, base-uri, form-action, frame-ancestors: закривають вбудовування
+//     плагінів, підміну <base>, відправлення форм на сторонні сайти та показ
+//     сторінки в чужому фреймі (clickjacking).
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-eval'",
+  "style-src 'self' https://fonts.googleapis.com",
+  "font-src https://fonts.gstatic.com",
+  "img-src 'self' data:",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "form-action 'self'",
+  "frame-ancestors 'none'"
+].join("; ");
+
+app.use((req, res, next) => {
+  res.set({
+    "Content-Security-Policy": CONTENT_SECURITY_POLICY,
+    // Браузер не вгадує тип файлу за вмістом (MIME sniffing)
+    "X-Content-Type-Options": "nosniff",
+    // Той самий захист від фреймів для старих браузерів без frame-ancestors
+    "X-Frame-Options": "DENY",
+    // Адреса сторінки не передається на інші сайти в заголовку Referer
+    "Referrer-Policy": "no-referrer"
+  });
+  next();
+});
+
 // Журнал запитів у терміналі: видно метод, адресу та код відповіді
 app.use((req, res, next) => {
   const startedAt = Date.now();
   res.on("finish", () => {
-    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} (${Date.now() - startedAt} мс)`);
+    console.log(
+      `${req.method} ${req.originalUrl} -> ${res.statusCode} (${Date.now() - startedAt} мс)`
+    );
   });
   next();
 });
@@ -168,7 +229,9 @@ api
   .post((req, res) => {
     const { errors, value } = validateNewPost(req.body);
     if (errors.length > 0) {
-      return res.status(400).json({ error: "Некоректні дані оголошення", details: errors });
+      return res
+        .status(400)
+        .json({ error: "Некоректні дані оголошення", details: errors });
     }
 
     const post = { id: nextId++, ...value, date: new Date().toISOString() };
@@ -178,7 +241,10 @@ api
     res.status(201).location(`/api/posts/${post.id}`).json(post);
   })
   .all((req, res) => {
-    res.set("Allow", "GET, POST").status(405).json({ error: "Метод не підтримується" });
+    res
+      .set("Allow", "GET, POST")
+      .status(405)
+      .json({ error: "Метод не підтримується" });
   });
 
 api
@@ -195,7 +261,10 @@ api
     res.json(post);
   })
   .all((req, res) => {
-    res.set("Allow", "GET").status(405).json({ error: "Метод не підтримується" });
+    res
+      .set("Allow", "GET")
+      .status(405)
+      .json({ error: "Метод не підтримується" });
   });
 
 // Будь-який інший шлях під /api
@@ -218,7 +287,10 @@ STATIC_DIRS.forEach((dir) => {
   // redirect: false - немає перенаправлення /js на /js/, одразу 404
   app.use(
     `/${dir}`,
-    express.static(path.join(CLIENT_DIR, dir), { index: false, redirect: false })
+    express.static(path.join(CLIENT_DIR, dir), {
+      index: false,
+      redirect: false
+    })
   );
 });
 
@@ -250,12 +322,16 @@ app.use((err, req, res, next) => {
 
 function start() {
   const server = app.listen(PORT, HOST, () => {
-    console.log(`Сервер запущено на http://${HOST === "127.0.0.1" ? "localhost" : HOST}:${PORT}`);
+    console.log(
+      `Сервер запущено на http://${HOST === "127.0.0.1" ? "localhost" : HOST}:${PORT}`
+    );
   });
 
   server.on("error", (error) => {
     if (error.code === "EADDRINUSE") {
-      console.error(`Порт ${PORT} уже зайнятий. Закрийте інший процес або задайте інший: PORT=3001 npm start`);
+      console.error(
+        `Порт ${PORT} уже зайнятий. Закрийте інший процес або задайте інший: PORT=3001 npm start`
+      );
     } else {
       console.error(error);
     }

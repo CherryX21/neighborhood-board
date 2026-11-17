@@ -19,8 +19,15 @@
 
     <link rel="stylesheet" href="css/style.css" />
 
-    <!-- Практична робота №10: Vue 3 (глобальна збірка, без Node.js і Vite) -->
-    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js" defer></script>
+    <!--
+      Практична робота №10: Vue 3 (глобальна збірка, без Vite).
+      Практична робота №15: бібліотеку розміщено локально (js/vendor), а не на
+      стороннім CDN. Сторонній скрипт без перевірки цілісності має повний доступ
+      до сторінки, localStorage та IndexedDB, а його підміна на CDN означала б
+      виконання чужого коду в застосунку. Файл: vue@3.5.13, dist/vue.global.prod.js
+      (SHA-256 c459ba7c…89e8), ліцензія MIT збережена в заголовку файлу.
+    -->
+    <script src="js/vendor/vue.global.prod.js" defer></script>
     <!-- app.js і storage.js мають виконатися раніше за script.js: вони створюють стан і сховище -->
     <script src="js/app.js" defer></script>
     <!-- Практична робота №11: шар збереження (localStorage, IndexedDB); створює window.PostStore -->
